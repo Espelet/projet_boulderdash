@@ -34,11 +34,20 @@ class jeu(list):
             coords_diams = self.verif_coords()
             self.append(fld.Diamant(coords_diams[0], coords_diams[1], jeu))
 
-        for y in range((((self.lgr - 2) * (self.hauteur - 2))) - len(self.coords)):
+        a = ((self.lgr - 2) * (self.hauteur - 2)) - len(self.coords)
+        for y in range(a - 1):
             coords_terre = self.verif_coords()
-            a = rd.randint(0, 10)
-            if a >= 8:
+            b = rd.randint(0, 11)
+            if b <= 8:
+                print(b, coords_terre)
                 self.append(fld.Terre(coords_terre[0], coords_terre[1], jeu))
+
+        coords_joueur = self.verif_coords()
+        self.append(fld.Joueur(coords_joueur[0], coords_joueur[1], jeu))
+
+        print("j'ai fini")
+
+
 
 
     def __str__(self):
@@ -60,13 +69,13 @@ class jeu(list):
         return res
 
     def verif_coords(self):
-        coords_obj = (rd.randint(1, self.lgr - 2), rd.randint(1, self.hauteur - 2))
+        coords_obj = (rd.randint(1, self.lgr - 1), rd.randint(1, self.hauteur - 1))
         while coords_obj in self.coords:
-            coords_obj = rd.randint(1, self.lgr - 2), rd.randint(1, self.hauteur - 2)
+            coords_obj = rd.randint(1, self.lgr - 1), rd.randint(1, self.hauteur - 1)
         self.coords.append(coords_obj)
         return coords_obj
 
 
 if __name__ == "__main__":
-    j = jeu(1)
+    j = jeu(2)
     print(j)
