@@ -1,6 +1,5 @@
 from load_game import *
 
-
 class terrain(jeu):
     def __init__(self, x, y):
         self.a = 12
@@ -21,7 +20,7 @@ class Diamant(terrain):
         super().__init__(x, y)
         self.val = 1
         self.EstConso = True
-        self.EstImmobile = True
+        self.EstImmobile = False
 
 
 class Pierre(terrain):
