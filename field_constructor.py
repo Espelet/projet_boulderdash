@@ -31,7 +31,20 @@ class Joueur(terrain):
         super().__init__(x, y, jeu)
         self.SeDeplace = True
         self.score = 0
-        self.vie = 3
+        self.__vie = 3
+
+    @property
+    def vie(self):
+        return self.__vie
+
+    @vie.setter
+    def vie(self, val):
+        a = val
+        self.__vie = a
+
+    def car(self):
+        return "J"
+
 
 
 class Diamant(terrain):
