@@ -21,7 +21,7 @@ class terrain:
     @coords.setter
     def coords(self, val):
         x, y = val
-        x = max(min(x, self.jeu.largeur), 0)
+        x = max(min(x, self.jeu.lgr), 0)
         y = max(min(y, self.jeu.hauteur), 0)
         self.__coords = (x, y)
 
