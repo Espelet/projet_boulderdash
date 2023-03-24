@@ -65,44 +65,32 @@ class BoulderDash:
                 return self.ajt_element(element, n)
     def move(self):
         while True:
+            if self.update():
+                break
             if keyboard.is_pressed("down arrow"):
                 self.P.move_player(0, 1)
-                if self.update():
-                    print(self)
-                    print("Fin des haricots !")
-                    break
                 print(self)
             if keyboard.is_pressed("up arrow"):
                 self.P.move_player(0, -1)
-                if self.update():
-                    print(self)
-                    print("Fin des haricots !")
-                    break
                 print(self)
             if keyboard.is_pressed("left arrow"):
                 self.P.move_player(-1, 0)
-                if self.update():
-                    print(self)
-                    print("Fin des haricots !")
-                    break
                 print(self)
             if keyboard.is_pressed("right arrow"):
                 self.P.move_player(1, 0)
-                if self.update():
-                    print(self)
-                    print("Fin des haricots !")
-                    break
                 print(self)
             if keyboard.is_pressed("esc"):
                 break
 
-            time.sleep(0.1)
+            time.sleep(0.033)
 
     def update(self):
+        self.falling_ent = self.P.get_falling_elements()
         for el in self.falling_ent:
             t = self.P.apply_gravity(el)
             if t:
                 print(self)
+                print("fin des haricots !")
                 return True
 
 

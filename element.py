@@ -114,7 +114,6 @@ class Plateau:
             if el.y + 1 < self.height:
                 if self.grid[el.x][el.y + 1] is None:
                     el.is_Falling = True
-                    print(el)
                     self.move_element(el, el.x, el.y + 1)
                     self.apply_gravity(el)
                 else:
