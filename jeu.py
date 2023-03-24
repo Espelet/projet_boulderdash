@@ -43,6 +43,7 @@ class BoulderDash:
         self.ajt_element(Diamant, self.nbr_diams)
         self.ajt_element(Brique, self.nbr_brick)
         self.ajt_element(Pierre, self.nbr_pierre)
+
         nbr_dirt = ((self.height - 2) * (self.width - 2) - (self.nbr_pierre + self.nbr_brick + self.nbr_diams)) // (
                     10 / 7)
         self.ajt_element(Terre, nbr_dirt)
@@ -58,8 +59,7 @@ class BoulderDash:
             return True
         else:
             coords = rd.randint(1, self.width), rd.randint(1, self.height)
-            print(self.P.is_used(coords[0], coords[1]))
-            if not self.P.is_used(coords[0], coords[1]) or isinstance(element, Sortie):
+            if not self.P.is_used(coords[0], coords[1]):
                 self.P.add_element(element(coords[0], coords[1]))
                 return self.ajt_element(element, n - 1)
             else:
@@ -111,8 +111,10 @@ class BoulderDash:
             return True
 
         self.falling_ent = self.P.get_falling_elements()
-        if not any(isinstance(x, Diamant) for x in self.falling_ent):
+        if not any(isinstance(x, Diamant) for x in self.falling_ent) and not self.P.is_element(Sortie):
             self.ajt_element(Sortie, 1)
+            print(self)
+            return False
 
         for el in self.falling_ent:
             t = self.P.apply_gravity(el)

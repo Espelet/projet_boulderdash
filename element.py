@@ -86,6 +86,13 @@ class Plateau:
     def remove_element(self, element):
         self.grid[element.x][element.y] = None
 
+    def is_element(self, el):
+        for i in range(self.width):
+            for j in range(self.height):
+                if isinstance(self.grid[i][j], el):
+                    return True
+        return False
+
     def move_element(self, element, x, y):
         self.remove_element(element)
         element.x = x
