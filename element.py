@@ -11,6 +11,7 @@ class Brick(Element):
         self.is_gravity_affected = False
         self.is_pushable = False
         self.is_consumable = False
+        self.is_Falling = False
         self.symbol = "#"
 
 class Player(Element):
@@ -19,6 +20,7 @@ class Player(Element):
         self.is_gravity_affected = False
         self.is_pushable = False
         self.is_consumable = False
+        self.is_Falling = False
         self.symbol = "P"
 
 class Diamond(Element):
@@ -27,6 +29,7 @@ class Diamond(Element):
         self.is_gravity_affected = True
         self.is_pushable = False
         self.is_consumable = True
+        self.is_Falling = False
         self.symbol = "D"
 
 class Stone(Element):
@@ -35,6 +38,7 @@ class Stone(Element):
         self.is_gravity_affected = True
         self.is_pushable = True
         self.is_consumable = False
+        self.is_Falling = False
         self.symbol = "O"
 
 class Dirt(Element):
@@ -43,6 +47,7 @@ class Dirt(Element):
         self.is_gravity_affected = False
         self.is_pushable = False
         self.is_consumable = True
+        self.is_Falling = False
         self.symbol = "."
 
 class Plateau:
@@ -71,7 +76,7 @@ class Plateau:
         self.add_element(element)
 
     def is_valid_position(self, x, y):
-        return x >= 0 and x < self.width and y >= 0 and y < self.height
+        return 0 <= x < self.width and 0 <= y < self.height
 
     def get_falling_elements(self):
         adjacent_elements = []
@@ -103,10 +108,18 @@ class Plateau:
         return True
 
     def apply_gravity(self, el):
-        for element in el:
-            if isinstance(element, (Diamond, Stone)):
-                if element.y + 1 < self.height:
-                    if self.grid[element.x][element.y + 1] is None:
-                        self.move_element(element, element.x, element.y + 1)
+        if isinstance(self.grid[el.x][el.y + 1], Player) and el.is_Falling:
+            return True
+        if isinstance(el, (Diamond, Stone)):
+            if el.y + 1 < self.height:
+                if self.grid[el.x][el.y + 1] is None:
+                    el.is_Falling = True
+                    print(el)
+                    self.move_element(el, el.x, el.y + 1)
+                    self.apply_gravity(el)
+                else:
+                    el.is_Falling = False
+            else:
+                el.is_Falling = False
 
 
