@@ -28,11 +28,6 @@ class BoulderDash:
             output += "\n"
         return output
 
-    def get(self, x, y):
-        if x < 0 or x >= self.width or y < 0 or y >= self.height:
-            return None
-        return self.grid[x][y]
-
     def generate(self):
         for j in range(self.height):
             for i in range(self.width):
@@ -40,6 +35,7 @@ class BoulderDash:
                     self.P.add_element(Brique(i, j))
                 else:
                     pass
+
         self.ajt_element(Diamant, self.nbr_diams)
         self.ajt_element(Brique, self.nbr_brick)
         self.ajt_element(Pierre, self.nbr_pierre)
