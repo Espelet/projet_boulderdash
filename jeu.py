@@ -1,4 +1,5 @@
 import random
+import sys
 import time
 
 from element import *
@@ -19,8 +20,8 @@ class BoulderDash:
 
     def __str__(self):
         output = ""
-        for j in range(self.height):
-            for i in range(self.width):
+        for i in range(self.width):
+            for j in range(self.height):
                 if self.grid[i][j] is None:
                     output += " "
                 else:
@@ -41,7 +42,7 @@ class BoulderDash:
         self.ajt_element(Pierre, self.nbr_pierre)
 
         nbr_dirt = ((self.height - 2) * (self.width - 2) - (self.nbr_pierre + self.nbr_brick + self.nbr_diams)) // (
-                    10 / 7)
+                10 / 7)
         self.ajt_element(Terre, nbr_dirt)
         player_pos = (0, 0)
         while self.P.is_used(player_pos[0], player_pos[1]):
@@ -49,6 +50,7 @@ class BoulderDash:
         player = Player(player_pos[0], player_pos[1])
         self.P.add_element(player)
         self.falling_ent = self.P.get_falling_elements()
+        return self
 
     def ajt_element(self, element, n):
         if n == 0:
@@ -123,17 +125,19 @@ class BoulderDash:
 
 class BoulderDashTest:
     def test_generate(self):
+        sys.setrecursionlimit(15000)
         bd = BoulderDash(self.niveau_a1()[0], self.niveau_a1()[1], self.niveau_a1()[2]
                          , self.niveau_a1()[3], self.niveau_a1()[4])
         bd.generate()
         print(bd)
-        bd.move()
+        return bd
+        # bd.move()
 
     def niveau_a1(self):
         width = 10
         height = 10
-        nbr_diams = 1
-        nbr_pierre = 1
+        nbr_diams = 5
+        nbr_pierre = 15
         nbr_brick = 5
         return width, height, nbr_diams, nbr_pierre, nbr_brick
 

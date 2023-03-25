@@ -2,6 +2,7 @@ import sys, os
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget, QPushButton, QApplication, QListWidget, QGridLayout, QLabel, QMainWindow
 from PyQt5.QtCore import QTimer,QDateTime
+import jeu, element
 
 
 def cut_image_into_tiles(image, rows=12, cols=24) -> dict:
@@ -38,6 +39,16 @@ class affi_pierre(data_element):
             self.pixmaps.append(self.tiles[x, y])
 
 
+class affi_joueur(data_element):
+    def __init__(self, tiles, dir):
+        super().__init__()
+        self.tiles = tiles
+        if dir is None:
+            x = 0
+            for y in range(2):
+                self.pixmaps.append(self.tiles[x, y])
+        self.pixmaps += self.pixmaps
+
 
 class affi_diams(data_element):
     def __init__(self, tiles):
@@ -47,6 +58,31 @@ class affi_diams(data_element):
         for x in range(4):
             self.pixmaps.append(self.tiles[x, y])
 
+
+class affi_brique(data_element):
+    def __init__(self, tiles):
+        super().__init__()
+        self.tiles = tiles
+        y = 0
+        for x in range(4):
+            self.pixmaps.append(self.tiles[0, y])
+
+
+class affi_terre(data_element):
+    def __init__(self, tiles):
+        super().__init__()
+        self.tiles = tiles
+        y = 1
+        for x in range(4):
+            self.pixmaps.append(self.tiles[0, y])
+
+class affi_None(data_element):
+    def __init__(self, tiles):
+        super().__init__()
+        self.tiles = tiles
+        y = 2
+        for x in range(4):
+            self.pixmaps.append(self.tiles[0, y])
 
 
 class affichage_element:
@@ -68,14 +104,26 @@ class label_gnr(QLabel):
         self.pixmaps = []
         self.tiles = tiles
 
-        if el == "P":
+        if isinstance(el, element.Pierre):
             self.pixmaps = affi_pierre(self.tiles).pixmaps
-        elif el == "D":
+        elif isinstance(el, element.Diamant):
             self.pixmaps = affi_diams(self.tiles).pixmaps
+        elif isinstance(el, element.Brique):
+            self.pixmaps = affi_brique(self.tiles).pixmaps
+        elif isinstance(el, element.Terre):
+            self.pixmaps = affi_terre(self.tiles).pixmaps
+        elif el is None:
+            self.pixmaps = affi_None(self.tiles).pixmaps
 
+
+class label_joueur(QLabel):
+    def __init__(self, tiles, dir):
+        super(label_joueur, self).__init__()
+        self.tiles = tiles
+        self.pixmaps = affi_joueur(self.tiles, dir).pixmaps
 
 class game_zone(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, boulderdash, parent=None):
         super(game_zone, self).__init__(parent)
         self.setWindowTitle('QTimer example')
         self.listFile = QListWidget()
@@ -84,39 +132,45 @@ class game_zone(QWidget):
         layout.setSpacing(0)
         layout.setHorizontalSpacing(0)
         layout.setVerticalSpacing(0)
-        tiles = cut_image_into_tiles('./images/Tileset.png', 24, 12)
+        tiles_element = cut_image_into_tiles('./images/Tileset.png', 24, 12)
+        tiles_joueur = cut_image_into_tiles('./images/player_new.png', 15, 6)
 
 
-        for k in range(40):
-            lbl = label_gnr(tiles, "P")
-            layout.addWidget(lbl, 0, k)
-        for i in range(40):
-            lbl = label_gnr(tiles, "D")
-            layout.addWidget(lbl, 1, i)
+        self.boulderdash = boulderdash
+        for x in range(self.boulderdash.width):
+            for y in range(self.boulderdash.height):
+                if isinstance(self.boulderdash.grid[x][y], element.Player):
+                    lbl = label_joueur(tiles_joueur, None)
+                    lbl.setStyleSheet("background-image : url(./images/background.png)")
+                else:
+                    lbl = label_gnr(tiles_element, self.boulderdash.grid[x][y])
+                layout.addWidget(lbl, x, y)
+
 
         self.aff = affichage_element(layout)
 
         self.timer = QTimer()
-        self.timer.timeout.connect(self.showTime)
+        self.timer.timeout.connect(self.display)
 
         self.setLayout(layout)
         self.resize(self.sizeHint())
-        self.timer.start(333)
+        self.timer.start(200)
 
-    def showTime(self):
+    def display(self):
         self.aff.affiche()
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, boulderdash):
         super(MainWindow, self).__init__()
         self.setWindowTitle("Boulderdash")
-        widget = game_zone()
+        widget = game_zone(boulderdash)
         self.setCentralWidget(widget)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    jeu = MainWindow()
+    boulderdash = jeu.BoulderDashTest().test_generate()
+    jeu = MainWindow(boulderdash)
     jeu.show()
     sys.exit(app.exec_())
