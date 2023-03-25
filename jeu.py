@@ -20,8 +20,8 @@ class BoulderDash:
 
     def __str__(self):
         output = ""
-        for i in range(self.width):
-            for j in range(self.height):
+        for j in range(self.height):
+            for i in range(self.width):
                 if self.grid[i][j] is None:
                     output += " "
                 else:
@@ -130,8 +130,9 @@ class BoulderDashTest:
                          , self.niveau_a1()[3], self.niveau_a1()[4])
         bd.generate()
         print(bd)
+        bd.move()
         return bd
-        # bd.move()
+
 
     def niveau_a1(self):
         width = 10
