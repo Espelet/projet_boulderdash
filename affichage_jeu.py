@@ -126,14 +126,12 @@ class label_joueur(QLabel):
         self.pixmaps = affi_joueur(self.tiles, dir).pixmaps
 
 class game_zone(QWidget):
-    def __init__(self, boulderdash, parent=None):
+    def __init__(self, parent=None):
         super(game_zone, self).__init__(parent)
         self.setWindowTitle('QTimer example')
         self.listFile = QListWidget()
         self.tiles_element = cut_image_into_tiles('./images/Tileset.png', 24, 12)
         self.tiles_joueur = cut_image_into_tiles('./images/player_new.png', 15, 6)
-
-        self.boulderdash = boulderdash
         self.layout = QGridLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
@@ -154,7 +152,6 @@ class game_zone(QWidget):
         self.aff.affiche()
 
     def create_layout(self):
-        print("je suis executé")
         for x in range(self.boulderdash.width):
             for y in range(self.boulderdash.height):
                 if isinstance(self.boulderdash.grid[x][y], element.Player):
