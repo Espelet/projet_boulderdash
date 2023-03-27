@@ -1,5 +1,6 @@
-import os
+import os,time
 
+from PyQt5.QtCore import QTimer, QRect
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QGridLayout, QLabel
 
@@ -28,7 +29,13 @@ class Element:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.pixmaps = []
+        self.__pixmaps = []
+    @property
+    def pixmaps(self):
+        return self.__pixmaps
+    @pixmaps.setter
+    def pixmaps(self, val):
+            self.__pixmaps = val
 
 
 class Brique(Element):
@@ -56,7 +63,6 @@ class Sortie(Element):
         for x in range(4):
             self.pixmaps.append(self.tiles[x, y])
 
-
 class Player(Element):
     def __init__(self, x, y, tiles, dir):
         super().__init__(x, y)
@@ -65,11 +71,37 @@ class Player(Element):
         self.is_consumable = False
         self.is_Falling = False
         self.tiles = tiles
-        if dir is None:
+        self.dir = dir
+        self.anim()
+
+    def anim(self):
+        self.pixmaps = []
+        if self.dir is None:
             x = 0
             for y in range(2):
                 self.pixmaps.append(self.tiles[x, y])
                 self.pixmaps.append(self.tiles[x, y])
+        elif self.dir == "down":
+            x = 4
+            for y in range(4):
+                self.pixmaps.append(self.tiles[x, y])
+        elif self.dir == "up":
+            x = 2
+            for y in range(4):
+                self.pixmaps.append(self.tiles[x, y])
+        elif self.dir == "left":
+            x = 1
+            for y in range(3):
+                self.pixmaps.append(self.tiles[x, y])
+            self.pixmaps.append(self.tiles[5, 3])
+        elif self.dir == "right":
+            x = 3
+            for y in range(3):
+                self.pixmaps.append(self.tiles[x, y])
+            self.pixmaps.append(self.tiles[5, 1])
+        return self.pixmaps
+
+
 
 
 class Diamant(Element):
@@ -128,6 +160,24 @@ class label_gnr(QLabel):
         self.pixmaps = self.element.pixmaps
 
 
+class affichage_element:
+    def __init__(self, lbl):
+        self.layout = lbl
+        self.current_frame = 0
+
+    def affiche(self):
+        for k in range(self.layout.count()):
+            item = self.layout.itemAt(k).widget()
+            try:
+                item.setPixmap(item.element.pixmaps[self.current_frame])
+            except:
+                a = True
+
+        self.current_frame += 1
+        if self.current_frame >= 4:
+            self.current_frame = 0
+
+
 class Plateau(QGridLayout):
     def __init__(self, width, height, parent=None):
         super(Plateau, self).__init__(parent)
@@ -135,9 +185,17 @@ class Plateau(QGridLayout):
         self.tiles_joueur = cut_image_into_tiles('./images/player_new.png', 15, 6)
         self.width = width
         self.height = height
+        self.setGeometry(QRect(0, 0, 80 * self.width, 80 * self.height))
         self.grid = [[None for _ in range(self.height)] for _ in range(self.width)]
         self.player = None
         self.score = 0
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.display)
+        self.aff = affichage_element(self)
+        self.timer.start(100)
+
+    def display(self):
+        self.aff.affiche()
 
     def is_used(self, x, y):
         return self.grid[x][y] is not None
@@ -155,7 +213,6 @@ class Plateau(QGridLayout):
     def add_element(self, label_element):
         self.grid[label_element.element.x][label_element.element.y] = label_element
         self.addWidget(label_element, label_element.element.x, label_element.element.y)
-        self.update()
 
     def remove_element(self, label_element):
         self.grid[label_element.element.x][label_element.element.y] = None
@@ -163,7 +220,6 @@ class Plateau(QGridLayout):
             wid = self.itemAtPosition(label_element.element.x, label_element.element.y).widget()
             self.removeWidget(wid)
         self.removeWidget(label_element)
-        self.update()
 
     def is_element(self, el):
         for i in range(self.width):
@@ -193,7 +249,9 @@ class Plateau(QGridLayout):
                         adjacent_elements.append(self.grid[x][y])
         return adjacent_elements
 
-    def move_player(self, x_offset, y_offset):
+    def move_player(self, x_offset, y_offset, dir=None):
+        self.player.element.dir = dir
+        self.player.element.pixmaps = self.player.element.anim()
         x = self.player.element.x + x_offset
         y = self.player.element.y + y_offset
 
@@ -203,10 +261,12 @@ class Plateau(QGridLayout):
         target_element = self.grid[x][y]
         if target_element is None:
             self.move_element(self.player, x, y)
+
         elif isinstance(target_element.element, Terre):
             self.remove_element(target_element)
             self.move_element(self.player, x, y)
             self.player = self.player
+
         elif isinstance(target_element.element, Brique):
             return False
         elif isinstance(target_element.element, Diamant):
@@ -217,7 +277,7 @@ class Plateau(QGridLayout):
 
         elif isinstance(target_element.element, Sortie):
             self.remove_element(self.player)
-            self.player = None
+            self.player = target_element
             return True
 
         elif isinstance(target_element.element, Pierre):
@@ -227,7 +287,6 @@ class Plateau(QGridLayout):
             else:
                 self.move_element(target_element, target_element.element.x + x_offset, target_element.element.y + y_offset)
                 self.move_element(self.player, x, y)
-                return True
 
 
     def apply_gravity(self, el):
@@ -242,16 +301,13 @@ class Plateau(QGridLayout):
                 if self.grid[el.element.x + 1][el.element.y] is None:
                     el.element.is_Falling = True
                     self.move_element(el, el.element.x + 1, el.element.y)
-                    self.apply_gravity(el)
                 elif isinstance(self.grid[el.element.x + 1][el.element.y].element, (Diamant, Pierre)):
                     if self.grid[el.element.x + 1][el.element.y + 1] is None and self.grid[el.element.x][el.element.y + 1] is None:
                         el.element.is_Falling = True
                         self.move_element(el, el.element.x, el.element.y + 1)
-                        self.apply_gravity(el)
                     elif self.grid[el.element.x + 1][el.element.y - 1] is None and self.grid[el.element.x][el.element.y - 1] is None:
                         el.element.is_Falling = True
                         self.move_element(el, el.element.x, el.element.y - 1)
-                        self.apply_gravity(el)
                     else:
                         el.element.is_Falling = False
                 else:

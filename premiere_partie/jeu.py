@@ -1,8 +1,6 @@
-import random
 import sys
-import time
 
-from element import *
+from premiere_partie.element import *
 import numpy.random as rd
 import keyboard
 

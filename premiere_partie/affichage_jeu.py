@@ -2,9 +2,9 @@ import sys, os
 
 import keyboard
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QWidget, QPushButton, QApplication, QListWidget, QGridLayout, QLabel, QMainWindow
-from PyQt5.QtCore import QTimer,QDateTime
-import jeu, element
+from PyQt5.QtWidgets import QWidget, QApplication, QListWidget, QGridLayout, QLabel, QMainWindow
+from PyQt5.QtCore import QTimer
+from premiere_partie import element, jeu
 
 
 def cut_image_into_tiles(image, rows=12, cols=24) -> dict:
