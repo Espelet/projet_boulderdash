@@ -25,11 +25,11 @@ class alphabet(dict):
 
 
 class BoulderDash(QWidget):
-    def __init__(self, width, height, nbr_diams, nbr_pierre, nbr_brick, parent=None):
+    def __init__(self, width, height, premiere_ligne, parent=None):
         super(BoulderDash, self).__init__(parent)
         self.setStyleSheet(stylesheet_jeu)
-        self.setGeometry(QRect(0, 0, 80 * width, 80 * height))
-        self.setFixedSize(80 * width, 80 * height)
+        self.setFixedSize(80 * height, 80 * width)
+        self.setGeometry(QRect(0, 0, 80 * height, 80 * width))
         self.P = Plateau(width, height)
         self.P.setContentsMargins(0, 0, 0, 0)
         self.P.setSpacing(0)
@@ -39,10 +39,8 @@ class BoulderDash(QWidget):
         self.is_menu = False
         self.height = height
         self.width = width
-        self.nbr_diams = nbr_diams
-        self.nbr_pierre = nbr_pierre
-        self.nbr_brick = nbr_brick
-
+        self.premiere_ligne = premiere_ligne
+        self.x_sortie, self.y_sortie, self.score_a_atteindre, self.temps_imparti = 0, 0, 0, 0
         self.l_sv, self.t_sv = 0, 0
         self.l, self.t = 0, 0
         self.mvt_plateau = False
@@ -54,37 +52,29 @@ class BoulderDash(QWidget):
         self.aff = affichage_element(self.P)
 
     def generate(self):
-        for j in range(self.height):
-            for i in range(self.width):
-                if j == 0 or j == self.height - 1 or i == 0 or i == self.width - 1:
-                    self.P.add_element_on_grid(Brique(i, j, self.P.tiles_element))
-                else:
-                    pass
-
-        self.ajt_element(Diamant, self.nbr_diams)
-        self.ajt_element(Brique, self.nbr_brick)
-        self.ajt_element(Pierre, self.nbr_pierre)
-
-        nbr_dirt = int(
-            ((self.height - 2) * (self.width - 2) - (self.nbr_pierre + self.nbr_brick + self.nbr_diams)) * 0.7)
-        self.ajt_element(Terre, nbr_dirt)
-        player_pos = (0, 0)
-        while self.P.is_used(player_pos[0], player_pos[1]):
-            player_pos = (random.randint(0, self.width - 1), random.randint(0, self.height - 1))
-        player = Player(player_pos[0], player_pos[1], self.P.tiles_joueur, None)
-        self.P.add_element_on_grid(player)
-        self.falling_ent = self.P.get_falling_elements()
-
-    def ajt_element(self, element, n):
-        if n == 0:
-            return True
-        else:
-            coords = rd.randint(1, self.width), rd.randint(1, self.height)
-            if not self.P.is_used(coords[0], coords[1]):
-                self.P.add_element_on_grid(element(coords[0], coords[1], self.P.tiles_element))
-                return self.ajt_element(element, n - 1)
-            else:
-                return self.ajt_element(element, n)
+        with open("./niveau/A.txt", "r") as f:
+            lines = f.readlines()[self.premiere_ligne:]
+            self.y_sortie, self.x_sortie = tuple(map(int, lines[1].strip().split(' : ')[1].split(', ')))
+            self.score_a_atteindre = int(lines[2].strip().split(' : ')[1])
+            self.temps_imparti = int(lines[3].strip().split(' : ')[1])
+            h = 0
+            for i, ligne in enumerate(lines[5:]):
+                if i > self.width:
+                    break
+                for k in ligne.strip():
+                    if k == "M":
+                        self.P.add_element_on_grid(Brique(i, h, self.P.tiles_element))
+                    elif k == "D":
+                        self.P.add_element_on_grid(Diamant(i, h, self.P.tiles_element))
+                    elif k == "P":
+                        self.P.add_element_on_grid(Pierre(i, h, self.P.tiles_element))
+                    elif k == "J":
+                        self.P.add_element_on_grid(Player(i, h, self.P.tiles_joueur, None))
+                    elif k == "T":
+                        self.P.add_element_on_grid(Terre(i, h, self.P.tiles_element))
+                    h += 1
+                h = 0
+            self.falling_ent = self.P.get_falling_elements()
 
     def bouge(self, dir):
         if dir == 'down':
@@ -103,11 +93,11 @@ class BoulderDash(QWidget):
         else:
             x = self.P.player.element.x * 80
             y = self.P.player.element.y * 80
-            if y > 500:
-                if y + 400 >= self.height * 80:
-                    l = 800 - self.height * 80
+            if y > 1000:
+                if y + 900 >= self.height * 80:
+                    l = 1600 - self.height * 80
                 else:
-                    l = 800 - (y + 400)
+                    l = 1600 - (y + 900)
             if x > 500:
                 if x + 400 >= self.width * 80:
                     t = 800 - self.width * 80
@@ -144,8 +134,9 @@ class BoulderDash(QWidget):
             print("score", self.P.score)
             return 0
 
-        if not any(isinstance(x.element, Diamant) for x in self.falling_ent) and not self.P.is_element(Sortie):
-            self.ajt_element(Sortie, 1)
+        if self.P.score >= self.score_a_atteindre and not self.P.is_element(Sortie):
+            self.P.remove_element(self.P.itemAtPosition(self.y_sortie-1, self.x_sortie - 1).widget())
+            self.P.add_element_on_grid(Sortie(self.y_sortie - 1, self.x_sortie - 1, self.P.tiles_element))
 
         self.falling_ent = self.P.get_falling_elements()
         for el in self.falling_ent:
@@ -190,11 +181,9 @@ class MenuDuJeu(QWidget):
 
 
 class LancerBoulderDash(QMainWindow):
-
     def __init__(self):
         super(LancerBoulderDash, self).__init__()
         self.setWindowTitle('BoulderDash')
-        # self.widget = self.test_generate()
         self.widget = self.lancer_menu_du_jeu()
         self.setCentralWidget(self.widget)
         #
@@ -232,7 +221,7 @@ class LancerBoulderDash(QMainWindow):
                 self.widget = None
                 #
                 # on crée l'aire de jeu et on l'affiche
-                bd = self.test_generate()
+                bd = self.genere_niveau(self.niveau_1())
                 self.widget = bd
                 self.setCentralWidget(self.widget)
                 self.widget.show()
@@ -250,13 +239,10 @@ class LancerBoulderDash(QMainWindow):
             print("Fini !")
             self.widget.hide()
             self.widget = None
-            print(self.widget)
             #
             # on génère le niveau suivant
-            bd = BoulderDash(self.niveau_a2()[0], self.niveau_a2()[1], self.niveau_a2()[2],
-                             self.niveau_a2()[3], self.niveau_a2()[4])
-            bd.generate()
-            self.widget = bd
+            bd_new = self.genere_niveau(self.niveau_2())
+            self.widget = bd_new
             self.setCentralWidget(self.widget)
             self.widget.show()
             #
@@ -267,20 +253,21 @@ class LancerBoulderDash(QMainWindow):
             self.widget = None
             self.close()
 
-    def test_generate(self):
+    def genere_niveau(self, premiere_ligne):
         #
         # on fixe les dimensions & l'emplacement de la fenêtre
-        self.setFixedSize(800, 800)
+        self.setFixedSize(1600, 800)
         self.setStyleSheet(stylesheet_jeu)
         qtRectangle = self.frameGeometry()
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
         #
-        # on génère le premier niveau
-        sys.setrecursionlimit(15000)
-        bd = BoulderDash(self.niveau_a1()[0], self.niveau_a1()[1], self.niveau_a1()[2],
-                         self.niveau_a1()[3], self.niveau_a1()[4])
+        # on génère le niveau
+        with open("./niveau/A.txt", "r") as f:
+            ligne_dimension = f.readlines()[premiere_ligne]
+            ligne, col = tuple(map(int, ligne_dimension.strip().split(' : ')[1].split(', ')))
+        bd = BoulderDash(ligne, col, premiere_ligne)
         bd.generate()
         return bd
         #
@@ -300,21 +287,13 @@ class LancerBoulderDash(QMainWindow):
         menu = MenuDuJeu()
         return menu
 
-    def niveau_a1(self):
-        width = 10
-        height = 10
-        nbr_diams = 1
-        nbr_pierre = 0
-        nbr_brick = 3
-        return width, height, nbr_diams, nbr_pierre, nbr_brick
+    def niveau_1(self):
+        ligne_a_lire = 0  # premiere ligne du fichier des niveaux à lire correspondant au niveau 1
+        return ligne_a_lire
 
-    def niveau_a2(self):
-        width = 20
-        height = 20
-        nbr_diams = 25
-        nbr_pierre = 25
-        nbr_brick = 10
-        return width, height, nbr_diams, nbr_pierre, nbr_brick
+    def niveau_2(self):
+        ligne_a_lire = 30  # premiere ligne du fichier des niveaux à lire correspondant au niveau 2
+        return ligne_a_lire
 
 
 stylesheet_jeu = """

@@ -143,15 +143,6 @@ class Terre(Element):
             self.pixmaps.append(self.tiles[0, y])
 
 
-class el_none(Element):
-    def __init__(self, x, y, tiles):
-        super().__init__(x, y)
-        self.tiles = tiles
-        y = 2
-        for x in range(4):
-            self.pixmaps.append(self.tiles[0, y])
-
-
 class label_gnr(QLabel):
     def __init__(self, tiles, el):
         super(label_gnr, self).__init__()
@@ -185,7 +176,7 @@ class Plateau(QGridLayout):
         self.tiles_joueur = cut_image_into_tiles('./images/player_new.png', 15, 6)
         self.width = width
         self.height = height
-        self.setGeometry(QRect(0, 0, 80 * self.width, 80 * self.height))
+        self.setGeometry(QRect(0, 0, 80 * self.height, 80 * self.width))
         self.grid = [[None for _ in range(self.height)] for _ in range(self.width)]
         self.player = None
         self.score = 0
@@ -287,7 +278,6 @@ class Plateau(QGridLayout):
             else:
                 self.move_element(target_element, target_element.element.x + x_offset, target_element.element.y + y_offset)
                 self.move_element(self.player, x, y)
-
 
     def apply_gravity(self, el):
         if self.is_used(el.element.x + 1, el.element.y):
