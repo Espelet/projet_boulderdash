@@ -1,5 +1,4 @@
-import os,time
-
+import os
 from PyQt5.QtCore import QTimer, QRect
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QGridLayout, QLabel
@@ -23,6 +22,23 @@ def cut_image_into_tiles(image, rows=12, cols=24) -> dict:
             tiles[(r, c)] = tile
 
     return tiles
+
+
+class alphabet(dict):
+    def __init__(self):
+        super(alphabet, self).__init__()
+        self.tiles = cut_image_into_tiles('./images/text.png', 12, 16)
+        self.ascii = "0123456789 abcdefghijklmnopqrstuvwxyz"
+        self.creer_alphabet()
+
+    def creer_alphabet(self):
+        k = self.ascii
+        for i in range(11):
+            self[k[i]] = self.tiles[0, i]
+        for i in range(16):
+            self[k[i + 11]] = self.tiles[1, i]
+        for i in range(10):
+            self[k[i + 27]] = self.tiles[2, i]
 
 
 class Element:
