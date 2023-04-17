@@ -46,12 +46,14 @@ class Element:
         self.x = x
         self.y = y
         self.__pixmaps = []
+
     @property
     def pixmaps(self):
         return self.__pixmaps
+
     @pixmaps.setter
     def pixmaps(self, val):
-            self.__pixmaps = val
+        self.__pixmaps = val
 
 
 class Brique(Element):
@@ -78,6 +80,7 @@ class Sortie(Element):
         y = 6
         for x in range(4):
             self.pixmaps.append(self.tiles[x, y])
+
 
 class Player(Element):
     def __init__(self, x, y, tiles, dir):
@@ -116,8 +119,6 @@ class Player(Element):
                 self.pixmaps.append(self.tiles[x, y])
             self.pixmaps.append(self.tiles[5, 1])
         return self.pixmaps
-
-
 
 
 class Diamant(Element):
@@ -288,11 +289,13 @@ class Plateau(QGridLayout):
             return True
 
         elif isinstance(target_element.element, Pierre):
-            if x_offset == -1 or not self.is_valid_position(target_element.element.x + x_offset, target_element.element.y + y_offset) \
+            if x_offset == -1 or not self.is_valid_position(target_element.element.x + x_offset,
+                                                            target_element.element.y + y_offset) \
                     or self.is_used(target_element.element.x + x_offset, target_element.element.y + y_offset):
                 return False
             else:
-                self.move_element(target_element, target_element.element.x + x_offset, target_element.element.y + y_offset)
+                self.move_element(target_element, target_element.element.x + x_offset,
+                                  target_element.element.y + y_offset)
                 self.move_element(self.player, x, y)
 
     def apply_gravity(self, el):
@@ -311,7 +314,8 @@ class Plateau(QGridLayout):
                     if self.grid[el.element.x + 1][el.element.y + 1] is None and self.grid[el.element.x][el.element.y + 1] is None:
                         el.element.is_Falling = True
                         self.move_element(el, el.element.x, el.element.y + 1)
-                    elif self.grid[el.element.x + 1][el.element.y - 1] is None and self.grid[el.element.x][el.element.y - 1] is None:
+                    elif self.grid[el.element.x + 1][el.element.y - 1] is None and self.grid[el.element.x][
+                        el.element.y - 1] is None:
                         el.element.is_Falling = True
                         self.move_element(el, el.element.x, el.element.y - 1)
                     else:

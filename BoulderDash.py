@@ -26,6 +26,7 @@ class BoulderDash(QWidget):
         self.timer_mvt_plateau = QTimer()
         self.timer_mvt_plateau.timeout.connect(self.mouvement_plateau)
         self.timer_mvt_plateau.start(10)
+        self.
 
         self.setLayout(self.P)
         self.aff = affichage_element(self.P)
@@ -114,7 +115,7 @@ class BoulderDash(QWidget):
             return 0
 
         if self.P.score >= self.score_a_atteindre and not self.P.is_element(Sortie):
-            self.P.remove_element(self.P.itemAtPosition(self.y_sortie-1, self.x_sortie - 1).widget())
+            self.P.remove_element(self.P.itemAtPosition(self.y_sortie - 1, self.x_sortie - 1).widget())
             self.P.add_element_on_grid(Sortie(self.y_sortie - 1, self.x_sortie - 1, self.P.tiles_element))
 
         self.falling_ent = self.P.get_falling_elements()
@@ -124,6 +125,16 @@ class BoulderDash(QWidget):
                 print("fin des haricots !")
                 print("score", self.P.score)
                 return 1
+
+
+class score(QWidget):
+    def __init__(self, score_a_atteindre, temps_imparti):
+        super(score, self).__init__()
+        self.score = score_a_atteindre
+        self.temps = temps_imparti
+
+    def verif_temps(self):
+        return True if self.temps == 0 else False
 
 
 stylesheet_jeu = """

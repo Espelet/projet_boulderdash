@@ -57,7 +57,7 @@ class LancerBoulderDash(QMainWindow):
     def check_fin(self):
         self.n += 1
         if self.n % 8 == 0:
-            self.incr_temps()
+
 
         a = self.widget.update_plateau()
 
