@@ -4,7 +4,6 @@ from PyQt5.Qt import Qt
 from PyQt5.QtCore import QTimer, QTime, QRect
 from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QDesktopWidget
 from element_deuxieme_partie import *
-import numpy.random as rd
 from math import *
 
 
