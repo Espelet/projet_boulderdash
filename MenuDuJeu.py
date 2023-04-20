@@ -18,7 +18,7 @@ class MenuDuJeu(QWidget):
         self.setLayout(self.layout)
 
     def update_plateau(self):
-        return 15
+        return 15, 0
 
     def write(self):
         asci = self.wrt

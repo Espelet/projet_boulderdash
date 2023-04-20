@@ -33,6 +33,7 @@ class BoulderDash(QWidget):
         self.l_sv, self.t_sv = 0, 0
         self.l, self.t = 0, 0
         self.mvt_plateau = False
+        self.score = 0
         self.timer_mvt_plateau = QTimer()
         self.timer_mvt_plateau.timeout.connect(self.mouvement_plateau)
         self.timer_mvt_plateau.start(10)
@@ -67,13 +68,13 @@ class BoulderDash(QWidget):
 
     def bouge(self, dir):
         if dir == 'down':
-            self.P.move_player(1, 0, 'down')
+            self.score += self.P.move_player(1, 0, 'down')
         elif dir == 'up':
-            self.P.move_player(-1, 0, 'up')
+            self.score += self.P.move_player(-1, 0, 'up')
         elif dir == 'left':
-            self.P.move_player(0, -1, 'left')
+            self.score += self.P.move_player(0, -1, 'left')
         elif dir == 'right':
-            self.P.move_player(0, 1, 'right')
+            self.score += self.P.move_player(0, 1, 'right')
 
     def centrer_vue(self):
         l, t = 0, 0
@@ -127,10 +128,9 @@ class BoulderDash(QWidget):
             print(self.temps_imparti)
         if isinstance(self.P.player.element, Sortie):
             print("fin de la partie, bravo !")
-            print("score", self.P.score)
-            return 0
+            return 0, self.score + self.temps_imparti
 
-        if self.P.score/10 >= self.score_a_atteindre and not self.P.is_element(Sortie):
+        if self.score/10 >= self.score_a_atteindre and not self.P.is_element(Sortie):
             self.P.point_par_diamant = 15
             self.P.remove_element(self.P.itemAtPosition(self.y_sortie - 1, self.x_sortie - 1).widget())
             self.P.add_element_on_grid(Sortie(self.y_sortie - 1, self.x_sortie - 1, self.P.tiles_element))
@@ -140,16 +140,15 @@ class BoulderDash(QWidget):
             t = self.P.apply_gravity(el)
             if t or self.verif_temps():
                 print("fin des haricots !")
-                print("score", self.P.score)
                 self.close()
-                return 1
+                return 1, self.score
+        return None, None
 
 
 class score(QWidget):
-    def __init__(self, temps, diamant_recolte):
+    def __init__(self, score):
         super(score, self).__init__()
-        self.temps = temps
-        self.nbre_diams = diamant_recolte
+        self.score = score
 
 
 stylesheet_jeu = """

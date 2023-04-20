@@ -1,4 +1,4 @@
-import sys
+import sys, os, time
 from PyQt5.Qt import Qt
 from PyQt5.QtCore import QTime, QMutex
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
@@ -19,6 +19,7 @@ class LancerBoulderDash(QMainWindow):
         self.timer.timeout.connect(self.check_fin)
         self.n = 0
         self.vie = 0
+        self.s = 0
         self.timer.start(125)
         self.time_el = QTime(0, 0, 0)  # Décompte du temps que le joueur a à disposition pour finir la partie
         self.niveau_actuel = None
@@ -34,17 +35,16 @@ class LancerBoulderDash(QMainWindow):
         if self.type_widget == "jeu":
             if event.key() == Qt.Key_S:
                 self.widget.bouge('down')
-
             elif event.key() == Qt.Key_Z:
                 self.widget.bouge('up')
-
             elif event.key() == Qt.Key_Q:
                 self.widget.bouge('left')
-
             elif event.key() == Qt.Key_D:
                 self.widget.bouge('right')
             elif event.key() == Qt.Key_Escape:
                 self.changement_de_plateau(self.niveau_actuel)
+            elif event.key() == Qt.Key_N:
+                self.sauvegarde()
         elif self.type_widget == "menu":
             if event.key() == Qt.Key_Return:
                 #
@@ -56,24 +56,59 @@ class LancerBoulderDash(QMainWindow):
                 #
 
     def check_fin(self):
-        a = self.widget.update_plateau()
+        a, pt = self.widget.update_plateau()
         if a == 1:  # le joueur est mort
             self.vie -= 1
             if self.vie == 0:
                 print("NUL NUL NUL !")
+                print("score : ", self.s)
                 self.close()
             if self.vie > 0:
                 print("Vie restante : ", self.vie)
+                print("score : ", self.s)
                 self.changement_de_plateau(self.niveau_actuel)
 
         elif a == 0:  # le joueur a complété le niveau
             print("Fini !")
+            self.s += pt
+            print("score : ", self.s)
             #
             # on génère le niveau suivant
             self.niveau_actuel = self.niveau_2()
             self.changement_de_plateau(self.niveau_actuel)
             #
             #
+
+    def sauvegarde(self):
+        list_of_files = os.listdir('./sauv')
+        full_path = ["./sauv/{0}".format(x) for x in list_of_files]
+        if len(list_of_files) == 5:
+            oldest_file = min(full_path, key=os.path.getctime)
+            os.remove(oldest_file)
+
+        nom_fichier = "./sauv/sauv_" + time.strftime("%Y%m%d-%H%M%S")+ ".txt"
+        res = ""
+        res += "niveau : " + self.niveau_actuel
+        res += ""
+        with open(nom_fichier, "w") as f:
+            for k in self.widget.P.grid:
+                for i in k:
+                    print(i)
+                    if i is None:
+                        res += " "
+                    elif isinstance(i.element, Diamant):
+                        res += "D"
+                    elif isinstance(i.element, Pierre):
+                        res += "P"
+                    elif isinstance(i.element, Terre):
+                        res += "T"
+                    elif isinstance(i.element, Brique):
+                        res += "B"
+                    elif isinstance(i.element, Player):
+                        res += "J"
+                res += "\n"
+            f.write(res)
+            print(f)
 
     def changement_de_plateau(self, niveau):
         self.widget = Stase()

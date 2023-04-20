@@ -196,7 +196,6 @@ class Plateau(QGridLayout):
         self.setGeometry(QRect(0, 0, 80 * self.height, 80 * self.width))
         self.grid = [[None for _ in range(self.height)] for _ in range(self.width)]
         self.player = None
-        self.score = 0
         self.point_par_diamant = 10
         self.timer = QTimer()
         self.timer.timeout.connect(self.display)
@@ -265,7 +264,7 @@ class Plateau(QGridLayout):
         y = self.player.element.y + y_offset
 
         if not self.is_valid_position(x, y):
-            return False
+            return 0
 
         target_element = self.grid[x][y]
         if target_element is None:
@@ -277,27 +276,29 @@ class Plateau(QGridLayout):
             self.player = self.player
 
         elif isinstance(target_element.element, Brique):
-            return False
+            return 0
+
         elif isinstance(target_element.element, Diamant):
-            self.score += self.point_par_diamant
             self.remove_element(target_element)
             self.move_element(self.player, x, y)
-            return self.score
+            return self.point_par_diamant
 
         elif isinstance(target_element.element, Sortie):
             self.remove_element(self.player)
             self.player = target_element
-            return True
+            return 0
 
         elif isinstance(target_element.element, Pierre):
             if x_offset == -1 or not self.is_valid_position(target_element.element.x + x_offset,
                                                             target_element.element.y + y_offset) \
                     or self.is_used(target_element.element.x + x_offset, target_element.element.y + y_offset):
-                return False
+                return 0
             else:
                 self.move_element(target_element, target_element.element.x + x_offset,
                                   target_element.element.y + y_offset)
                 self.move_element(self.player, x, y)
+
+        return 0
 
     def apply_gravity(self, el):
         if self.is_used(el.element.x + 1, el.element.y):
