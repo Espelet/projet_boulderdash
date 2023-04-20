@@ -3,9 +3,19 @@ from math import *
 from element_deuxieme_partie import *
 
 
+class Stase(QWidget):
+    def __init__(self):
+        super(Stase, self).__init__()
+        self.is_menu = False
+        self.is_jeu = False
+
+    def update_plateau(self):
+        return 15
+
 class BoulderDash(QWidget):
     def __init__(self, width, height, premiere_ligne, parent=None):
         super(BoulderDash, self).__init__(parent)
+        self.falling_ent = []
         self.setStyleSheet(stylesheet_jeu)
         self.setFixedSize(80 * height, 80 * width)
         self.setGeometry(QRect(0, 0, 80 * height, 80 * width))
@@ -26,10 +36,9 @@ class BoulderDash(QWidget):
         self.timer_mvt_plateau = QTimer()
         self.timer_mvt_plateau.timeout.connect(self.mouvement_plateau)
         self.timer_mvt_plateau.start(10)
-        self.
-
         self.setLayout(self.P)
         self.aff = affichage_element(self.P)
+        self.n = 0
 
     def generate(self):
         with open("./niveau/A.txt", "r") as f:
@@ -74,10 +83,10 @@ class BoulderDash(QWidget):
             x = self.P.player.element.x * 80
             y = self.P.player.element.y * 80
             if y > 1000:
-                if y + 900 >= self.height * 80:
+                if y + 800 >= self.height * 80:
                     l = 1600 - self.height * 80
                 else:
-                    l = 1600 - (y + 900)
+                    l = 1600 - (y + 800)
             if x > 500:
                 if x + 400 >= self.width * 80:
                     t = 800 - self.width * 80
@@ -108,33 +117,39 @@ class BoulderDash(QWidget):
             else:
                 self.mvt_plateau = False
 
+    def verif_temps(self):
+        return True if self.temps_imparti == 0 else False
+
     def update_plateau(self):
+        self.n += 1
+        if self.n % 8 == 0:
+            self.temps_imparti -= 1
+            print(self.temps_imparti)
         if isinstance(self.P.player.element, Sortie):
             print("fin de la partie, bravo !")
             print("score", self.P.score)
             return 0
 
-        if self.P.score >= self.score_a_atteindre and not self.P.is_element(Sortie):
+        if self.P.score/10 >= self.score_a_atteindre and not self.P.is_element(Sortie):
+            self.P.point_par_diamant = 15
             self.P.remove_element(self.P.itemAtPosition(self.y_sortie - 1, self.x_sortie - 1).widget())
             self.P.add_element_on_grid(Sortie(self.y_sortie - 1, self.x_sortie - 1, self.P.tiles_element))
 
         self.falling_ent = self.P.get_falling_elements()
         for el in self.falling_ent:
             t = self.P.apply_gravity(el)
-            if t:
+            if t or self.verif_temps():
                 print("fin des haricots !")
                 print("score", self.P.score)
+                self.close()
                 return 1
 
 
 class score(QWidget):
-    def __init__(self, score_a_atteindre, temps_imparti):
+    def __init__(self, temps, diamant_recolte):
         super(score, self).__init__()
-        self.score = score_a_atteindre
-        self.temps = temps_imparti
-
-    def verif_temps(self):
-        return True if self.temps == 0 else False
+        self.temps = temps
+        self.nbre_diams = diamant_recolte
 
 
 stylesheet_jeu = """

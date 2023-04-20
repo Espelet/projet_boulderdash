@@ -1,6 +1,6 @@
 coordonnees du terrain : 22, 40
 coordonnees sortie : 17, 39	
-score a atteindre : 0
+nombre de diamants à récupérer pour finir le niveau : 10
 Temps imparti : 120
 
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
@@ -30,7 +30,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 
 coordonnees du terrain : 22, 40
 coordonnees sortie : 21, 19
-score a atteindre : 100
+nombre de diamants à récupérer pour finir le niveau : 10
 Temps imparti : 150
 
 MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM

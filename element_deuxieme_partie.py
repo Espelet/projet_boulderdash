@@ -197,6 +197,7 @@ class Plateau(QGridLayout):
         self.grid = [[None for _ in range(self.height)] for _ in range(self.width)]
         self.player = None
         self.score = 0
+        self.point_par_diamant = 10
         self.timer = QTimer()
         self.timer.timeout.connect(self.display)
         self.aff = affichage_element(self)
@@ -278,7 +279,7 @@ class Plateau(QGridLayout):
         elif isinstance(target_element.element, Brique):
             return False
         elif isinstance(target_element.element, Diamant):
-            self.score += 10
+            self.score += self.point_par_diamant
             self.remove_element(target_element)
             self.move_element(self.player, x, y)
             return self.score
@@ -303,14 +304,13 @@ class Plateau(QGridLayout):
             if isinstance(self.grid[el.element.x + 1][el.element.y].element, Player) and el.element.is_Falling:
                 self.remove_element(self.player)
                 self.move_element(el, el.element.x + 1, el.element.y)
-                self.player = None
                 return True
         if isinstance(el.element, (Diamant, Pierre)):
             if el.element.x + 1 < self.height:
                 if self.grid[el.element.x + 1][el.element.y] is None:
                     el.element.is_Falling = True
                     self.move_element(el, el.element.x + 1, el.element.y)
-                elif isinstance(self.grid[el.element.x + 1][el.element.y].element, (Diamant, Pierre)):
+                elif isinstance(self.grid[el.element.x + 1][el.element.y].element, (Diamant, Pierre)) or el.element.is_Falling:
                     if self.grid[el.element.x + 1][el.element.y + 1] is None and self.grid[el.element.x][el.element.y + 1] is None:
                         el.element.is_Falling = True
                         self.move_element(el, el.element.x, el.element.y + 1)
