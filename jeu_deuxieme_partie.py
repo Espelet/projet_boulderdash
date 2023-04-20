@@ -45,6 +45,8 @@ class LancerBoulderDash(QMainWindow):
                 self.changement_de_plateau(self.niveau_actuel)
             elif event.key() == Qt.Key_N:
                 self.sauvegarde()
+            elif event.key() == Qt.Key_L:
+                self.load_niveau()
         elif self.type_widget == "menu":
             if event.key() == Qt.Key_Return:
                 #
@@ -88,12 +90,12 @@ class LancerBoulderDash(QMainWindow):
 
         nom_fichier = "./sauv/sauv_" + time.strftime("%Y%m%d-%H%M%S")+ ".txt"
         res = ""
-        res += "niveau : " + self.niveau_actuel
-        res += ""
+        res += "niveau : " + str(self.niveau_actuel) + "\n"
+        res += "score : " + str(self.s + self.widget.score) + "\n"
+        res += "temps restant : " + str(self.widget.temps_imparti) + "\n\n"
         with open(nom_fichier, "w") as f:
             for k in self.widget.P.grid:
                 for i in k:
-                    print(i)
                     if i is None:
                         res += " "
                     elif isinstance(i.element, Diamant):
@@ -103,12 +105,12 @@ class LancerBoulderDash(QMainWindow):
                     elif isinstance(i.element, Terre):
                         res += "T"
                     elif isinstance(i.element, Brique):
-                        res += "B"
+                        res += "M"
                     elif isinstance(i.element, Player):
                         res += "J"
                 res += "\n"
             f.write(res)
-            print(f)
+        print("avancement actuel sauvegardé !")
 
     def changement_de_plateau(self, niveau):
         self.widget = Stase()
@@ -118,7 +120,25 @@ class LancerBoulderDash(QMainWindow):
         self.setCentralWidget(self.widget)
         self.widget.show()
 
-    def genere_niveau(self, premiere_ligne):
+    def load_niveau(self):
+        self.widget.close()
+        self.widget = Stase()
+        self.type_widget = "jeu"
+        list_of_files = os.listdir('./sauv')
+        full_path = ["./sauv/{0}".format(x) for x in list_of_files]
+        oldest_file = min(full_path, key=os.path.getctime)
+        with open(oldest_file, "r") as f:
+            premiere_ligne = int(f.readlines()[0].strip().split(' : ')[1])
+            f.close()
+        print('ras')
+        bd = self.genere_niveau(premiere_ligne, is_sauv=True, sauv=oldest_file)
+        print('ras')
+        self.widget = bd
+        self.setCentralWidget(self.widget)
+        self.widget.show()
+        print("derniere sauvegarde loadée !")
+
+    def genere_niveau(self, premiere_ligne, is_sauv=False, sauv=""):
         #
         # on fixe les dimensions & l'emplacement de la fenêtre
         self.setFixedSize(1600, 800)
@@ -127,16 +147,29 @@ class LancerBoulderDash(QMainWindow):
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
-        #
-        # on génère le niveau
-        with open("./niveau/A.txt", "r") as f:
-            ligne_dimension = f.readlines()[premiere_ligne]
-            ligne, col = tuple(map(int, ligne_dimension.strip().split(' : ')[1].split(', ')))
-        bd = BoulderDash(ligne, col, premiere_ligne)
-        bd.generate()
-        return bd
-        #
-        #
+        if is_sauv:
+            #
+            # on génère le niveau
+            with open("./niveau/A.txt", "r") as g:
+                ligne_dimension = g.readlines()[premiere_ligne]
+                print(ligne_dimension)
+                ligne, col = tuple(map(int, ligne_dimension.strip().split(' : ')[1].split(', ')))
+                g.close()
+            bd = BoulderDash(ligne, col, premiere_ligne)
+            bd.generate(sauv)
+            return bd
+            #
+            #
+        else:
+            with open("./niveau/A.txt", "r") as f:
+                ligne_dimension = f.readlines()[premiere_ligne]
+                ligne, col = tuple(map(int, ligne_dimension.strip().split(' : ')[1].split(', ')))
+                f.close()
+            bd = BoulderDash(ligne, col, premiere_ligne)
+            bd.generate()
+            return bd
+            #
+            #
 
     def lancer_menu_du_jeu(self):
         #

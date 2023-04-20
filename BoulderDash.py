@@ -41,14 +41,28 @@ class BoulderDash(QWidget):
         self.aff = affichage_element(self.P)
         self.n = 0
 
-    def generate(self):
+    def recup_data_niveau(self):
         with open("./niveau/A.txt", "r") as f:
             lines = f.readlines()[self.premiere_ligne:]
             self.y_sortie, self.x_sortie = tuple(map(int, lines[1].strip().split(' : ')[1].split(', ')))
             self.score_a_atteindre = int(lines[2].strip().split(' : ')[1])
             self.temps_imparti = int(lines[3].strip().split(' : ')[1])
+            f.close()
+
+    def generate(self, fichier_a_lire="./niveau/A.txt"):
+        self.recup_data_niveau()
+        if fichier_a_lire != "./niveau/A.txt":
+            self.premiere_ligne = 0
+        with open(fichier_a_lire, "r") as f:
+            lines = f.readlines()[self.premiere_ligne:]
+            if fichier_a_lire != "./niveau/A.txt":
+                k = 4
+                self.score = int(lines[1].strip().split(' : ')[1])
+                self.temps_imparti = int(lines[2].strip().split(' : ')[1])
+            else:
+                k = 5
             h = 0
-            for i, ligne in enumerate(lines[5:]):
+            for i, ligne in enumerate(lines[k:]):
                 if i > self.width:
                     break
                 for k in ligne.strip():
