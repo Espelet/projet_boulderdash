@@ -4,6 +4,8 @@ from element_deuxieme_partie import *
 
 
 class Stase(QWidget):
+    """classe de transition entre chaque chargement de niveau"""
+
     def __init__(self):
         super(Stase, self).__init__()
         self.is_menu = False
@@ -12,8 +14,12 @@ class Stase(QWidget):
     def update_plateau(self):
         return 15
 
+
 class BoulderDash(QWidget):
+    """classe générant un niveau de jeu"""
+
     def __init__(self, width, height, premiere_ligne, parent=None):
+        """crée le niveau en fonction des paramètres d'entrée"""
         super(BoulderDash, self).__init__(parent)
         self.falling_ent = []
         self.setStyleSheet(stylesheet_jeu)
@@ -151,7 +157,7 @@ class BoulderDash(QWidget):
             print("fin de la partie, bravo !")
             return 0, self.score + self.temps_imparti
 
-        if self.score/10 >= self.score_a_atteindre and not self.P.is_element(Sortie):
+        if self.score / 10 >= self.score_a_atteindre and not self.P.is_element(Sortie):
             self.P.point_par_diamant = 15
             self.P.remove_element(self.P.itemAtPosition(self.y_sortie - 1, self.x_sortie - 1).widget())
             self.P.add_element_on_grid(Sortie(self.y_sortie - 1, self.x_sortie - 1, self.P.tiles_element))

@@ -26,9 +26,10 @@ def cut_image_into_tiles(image, rows=12, cols=24) -> dict:
 
 
 class alphabet(dict):
+    """génère un alphabet pour le menu à partir du tileset"""
     def __init__(self):
         super(alphabet, self).__init__()
-        self.tiles = cut_image_into_tiles('./images/text.png', 12, 16)
+        self.tiles = cut_image_into_tiles("./images/text.png", 12, 16)
         self.ascii = "0123456789 abcdefghijklmnopqrstuvwxyz"
         self.creer_alphabet()
 
@@ -44,6 +45,7 @@ class alphabet(dict):
 
 
 class Element:
+    """classe régissant les éléments d'un plateau"""
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -61,6 +63,7 @@ class Element:
 
 
 class Brique(Element):
+    """classe définissant l'élément Brique"""
     def __init__(self, x, y, tiles):
         super().__init__(x, y)
         self.is_gravity_affected = False
@@ -74,6 +77,7 @@ class Brique(Element):
 
 
 class Sortie(Element):
+    """classe définissant le joueur"""
     def __init__(self, x, y, tiles):
         super().__init__(x, y)
         self.is_gravity_affected = False
@@ -87,6 +91,7 @@ class Sortie(Element):
 
 
 class Player(Element):
+    """classe définissant le joueur"""
     def __init__(self, x, y, tiles, dir):
         super().__init__(x, y)
         self.is_gravity_affected = False
@@ -200,6 +205,7 @@ class affichage_element:
 class Plateau(QGridLayout):
     """Plateau sur lequel se crée le niveau ; hérite de la classe QGridLayout"""
     def __init__(self, width, height, parent=None):
+        """initialise le plateau avec les caractéristiqyes qui lui sont associées : dimension, timer, grille"""
         super(Plateau, self).__init__(parent)
         self.tiles_element = cut_image_into_tiles('./images/Tileset.png', 24, 12)
         self.tiles_joueur = cut_image_into_tiles('./images/player_new.png', 15, 6)

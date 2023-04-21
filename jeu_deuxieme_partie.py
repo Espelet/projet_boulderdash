@@ -1,6 +1,7 @@
-import sys, os, time
+import sys
+import time
 from PyQt5.Qt import Qt
-from PyQt5.QtCore import QTime, QMutex
+from PyQt5.QtCore import QMutex
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 from MenuDuJeu import *
 from BoulderDash import *
@@ -10,10 +11,14 @@ class LancerBoulderDash(QMainWindow):
     """classe principale générant l'IHM"""
     def __init__(self):
         super(LancerBoulderDash, self).__init__()
+        #
+        # lance le menu
         self.setWindowTitle('BoulderDash')
         self.widget = self.lancer_menu_du_jeu()
         self.type_widget = "menu"
         self.setCentralWidget(self.widget)
+        #
+        #
         #
         # lancer le minuteur permettant le mise à jour du plateau
         self.timer = QTimer()
@@ -87,7 +92,7 @@ class LancerBoulderDash(QMainWindow):
             oldest_file = min(full_path, key=os.path.getctime)
             os.remove(oldest_file)
 
-        nom_fichier = "./sauv/sauv_" + time.strftime("%Y%m%d-%H%M%S")+ ".txt"
+        nom_fichier = "./sauv/sauv_" + time.strftime("%Y%m%d-%H%M%S") + ".txt"
         res = ""
         res += "niveau : " + str(self.niveau_actuel) + "\n"
         res += "score : " + str(self.s + self.widget.score) + "\n"
@@ -201,7 +206,7 @@ class LancerBoulderDash(QMainWindow):
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv) # crée l'application de base Qt
-    jeu = LancerBoulderDash() # génère la fenêtre IHM
-    jeu.show() # affiche cette fenêtre
-    sys.exit(app.exec_()) # quitte le programme
+    app = QApplication(sys.argv)  # crée l'application de base Qt
+    jeu = LancerBoulderDash()  # génère la fenêtre IHM
+    jeu.show()  # affiche cette fenêtre
+    sys.exit(app.exec_())  # quitte le programme

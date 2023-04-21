@@ -24,8 +24,8 @@ class MenuDuJeu(QWidget):
     def write(self):
         """permet d'écrire HSCORE sur le menu, sujet à modification"""
         asci = self.wrt
-        liste_hscore = [[(1, 7), asci["h"]], [(1, 8), asci["s"]], [(1, 9), asci["c"]], [(1, 10), asci["o"]], [(1, 11), asci["r"]],
-                        [(1, 12), asci["e"]]]
+        liste_hscore = [[(1, 7), asci["h"]], [(1, 8), asci["s"]], [(1, 9), asci["c"]], [(1, 10), asci["o"]],
+                        [(1, 11), asci["r"]], [(1, 12), asci["e"]]]
         for k in range(28):
             for n in range(23):
                 lbl = QLabel("lbl")
