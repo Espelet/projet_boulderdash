@@ -7,6 +7,7 @@ from BoulderDash import *
 
 
 class LancerBoulderDash(QMainWindow):
+    """classe principale générant l'IHM"""
     def __init__(self):
         super(LancerBoulderDash, self).__init__()
         self.setWindowTitle('BoulderDash')
@@ -21,17 +22,13 @@ class LancerBoulderDash(QMainWindow):
         self.vie = 0
         self.s = 0
         self.timer.start(125)
-        self.time_el = QTime(0, 0, 0)  # Décompte du temps que le joueur a à disposition pour finir la partie
         self.niveau_actuel = None
         self._mutex = QMutex()
         #
         #
 
-    def incr_temps(self):
-        self.time_el = self.time_el.addSecs(1)
-        print(int(self.time_el.toString().split(":")[1]) * 60 + int(self.time_el.toString().split(":")[2]))
-
-    def keyPressEvent(self, event):  # récupérer les entrées clavier du joueur
+    def keyPressEvent(self, event):
+        """récupère les entrées clavier du joueur"""
         if self.type_widget == "jeu":
             if event.key() == Qt.Key_S:
                 self.widget.bouge('down')
@@ -58,6 +55,7 @@ class LancerBoulderDash(QMainWindow):
                 #
 
     def check_fin(self):
+        """vérifie l'état actuel de la partie en cours"""
         a, pt = self.widget.update_plateau()
         if a == 1:  # le joueur est mort
             self.vie -= 1
@@ -82,6 +80,7 @@ class LancerBoulderDash(QMainWindow):
             #
 
     def sauvegarde(self):
+        """permet de sauvegarder un niveau"""
         list_of_files = os.listdir('./sauv')
         full_path = ["./sauv/{0}".format(x) for x in list_of_files]
         if len(list_of_files) == 5:
@@ -113,6 +112,7 @@ class LancerBoulderDash(QMainWindow):
         print("avancement actuel sauvegardé !")
 
     def changement_de_plateau(self, niveau):
+        """permet de changer le niveau de jeu lors d'un passage à un niveay + difficile"""
         self.widget = Stase()
         self.type_widget = "jeu"
         bd = self.genere_niveau(niveau)
@@ -121,6 +121,7 @@ class LancerBoulderDash(QMainWindow):
         self.widget.show()
 
     def load_niveau(self):
+        """charge un niveau à partir d'une sauvegarde"""
         self.widget.close()
         self.widget = Stase()
         self.type_widget = "jeu"
@@ -131,6 +132,7 @@ class LancerBoulderDash(QMainWindow):
             premiere_ligne = int(f.readlines()[0].strip().split(' : ')[1])
             f.close()
         print('ras')
+        self.niveau_actuel = premiere_ligne
         bd = self.genere_niveau(premiere_ligne, is_sauv=True, sauv=oldest_file)
         print('ras')
         self.widget = bd
@@ -139,6 +141,7 @@ class LancerBoulderDash(QMainWindow):
         print("derniere sauvegarde loadée !")
 
     def genere_niveau(self, premiere_ligne, is_sauv=False, sauv=""):
+        """génère le plateau de jeu"""
         #
         # on fixe les dimensions & l'emplacement de la fenêtre
         self.setFixedSize(1600, 800)
@@ -172,6 +175,7 @@ class LancerBoulderDash(QMainWindow):
             #
 
     def lancer_menu_du_jeu(self):
+        """lance le menu du jeu au démarrage"""
         #
         # on fixe les dimensions & l'emplacement de la fenêtre
         self.setFixedSize(1024, 896)
@@ -186,16 +190,18 @@ class LancerBoulderDash(QMainWindow):
         return menu
 
     def niveau_1(self):
+        """donne la première ligne du fichier des niveaux à lire pour générer le premier niveau"""
         ligne_a_lire = 0  # premiere ligne du fichier des niveaux à lire correspondant au niveau 1
         return ligne_a_lire
 
     def niveau_2(self):
+        """donne la première ligne du fichier des niveaux à lire pour générer le deuxième niveau"""
         ligne_a_lire = 30  # premiere ligne du fichier des niveaux à lire correspondant au niveau 2
         return ligne_a_lire
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    jeu = LancerBoulderDash()
-    jeu.show()
-    sys.exit(app.exec_())
+    app = QApplication(sys.argv) # crée l'application de base Qt
+    jeu = LancerBoulderDash() # génère la fenêtre IHM
+    jeu.show() # affiche cette fenêtre
+    sys.exit(app.exec_()) # quitte le programme

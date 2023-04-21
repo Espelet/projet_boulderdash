@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QGridLayout, QLabel
 
 
 def cut_image_into_tiles(image, rows=12, cols=24) -> dict:
+    """découpe le tileset en carré de taille 80x80 afin d'assigner à chaque élément un tileset spécifique"""
     if isinstance(image, str) and os.path.exists(image):
         image = QPixmap(image)
     elif not isinstance(image, QPixmap):
@@ -32,6 +33,7 @@ class alphabet(dict):
         self.creer_alphabet()
 
     def creer_alphabet(self):
+        """genère l'alphabet en tileset"""
         k = self.ascii
         for i in range(11):
             self[k[i]] = self.tiles[0, i]
@@ -49,10 +51,12 @@ class Element:
 
     @property
     def pixmaps(self):
+        """renvoie le tileset de l'élément"""
         return self.__pixmaps
 
     @pixmaps.setter
     def pixmaps(self, val):
+        """définit le tileset de l'élément"""
         self.__pixmaps = val
 
 
@@ -94,6 +98,7 @@ class Player(Element):
         self.anim()
 
     def anim(self):
+        """définit le bon tileset à appliquer au joueur en fonction de la direction dans laquelle il l'a déplacé"""
         self.pixmaps = []
         if self.dir is None:
             x = 0
@@ -122,6 +127,7 @@ class Player(Element):
 
 
 class Diamant(Element):
+    """classe définissant l'élément Diamant"""
     def __init__(self, x, y, tiles):
         super().__init__(x, y)
         self.is_gravity_affected = True
@@ -135,6 +141,7 @@ class Diamant(Element):
 
 
 class Pierre(Element):
+    """classe définissant l'élément Pierre"""
     def __init__(self, x, y, tiles):
         super().__init__(x, y)
         self.is_gravity_affected = True
@@ -148,6 +155,7 @@ class Pierre(Element):
 
 
 class Terre(Element):
+    """classe définissant l'élément Pierre"""
     def __init__(self, x, y, tiles):
         super().__init__(x, y)
         self.is_gravity_affected = False
@@ -161,6 +169,7 @@ class Terre(Element):
 
 
 class label_gnr(QLabel):
+    """classe définissant le label permettant le bon affichage sur Qt des != éléments du niveau"""
     def __init__(self, tiles, el):
         super(label_gnr, self).__init__()
         self.tiles = tiles
@@ -169,11 +178,13 @@ class label_gnr(QLabel):
 
 
 class affichage_element:
+    """permet de mettre à jour l'affichage de chaque élément à chaque frame"""
     def __init__(self, lbl):
         self.layout = lbl
         self.current_frame = 0
 
     def affiche(self):
+        """effectue la rotation entre chaque frame du tileset"""
         for k in range(self.layout.count()):
             item = self.layout.itemAt(k).widget()
             try:
@@ -187,6 +198,7 @@ class affichage_element:
 
 
 class Plateau(QGridLayout):
+    """Plateau sur lequel se crée le niveau ; hérite de la classe QGridLayout"""
     def __init__(self, width, height, parent=None):
         super(Plateau, self).__init__(parent)
         self.tiles_element = cut_image_into_tiles('./images/Tileset.png', 24, 12)
@@ -203,12 +215,15 @@ class Plateau(QGridLayout):
         self.timer.start(100)
 
     def display(self):
+        """met à jour les tilesets des éléments sur le plateau"""
         self.aff.affiche()
 
     def is_used(self, x, y):
+        """vérifie si une case du plateau est utilisée"""
         return self.grid[x][y] is not None
 
     def add_element_on_grid(self, element):
+        """à la génération du plateau, permet l'ajout d'un élément sur le plateau"""
         if isinstance(element, Player):
             lbl = label_gnr(self.tiles_joueur, element)
             self.player = lbl
@@ -219,10 +234,12 @@ class Plateau(QGridLayout):
         self.update()
 
     def add_element(self, label_element):
+        """lors de la phase de jeu, permet d'ajouter un élément à une coordonnée précise"""
         self.grid[label_element.element.x][label_element.element.y] = label_element
         self.addWidget(label_element, label_element.element.x, label_element.element.y)
 
     def remove_element(self, label_element):
+        """lors de la phase de jeu, permet de supprimer un élément du plateau de jeu"""
         self.grid[label_element.element.x][label_element.element.y] = None
         if label_element == self.player:
             wid = self.itemAtPosition(label_element.element.x, label_element.element.y).widget()
@@ -230,6 +247,7 @@ class Plateau(QGridLayout):
         self.removeWidget(label_element)
 
     def is_element(self, el):
+        """vérifie qu'un élément existe bien sur le plateau"""
         for i in range(self.width):
             for j in range(self.height):
                 if self.grid[i][j] is not None:
@@ -238,6 +256,7 @@ class Plateau(QGridLayout):
         return False
 
     def move_element(self, label_element, x, y):
+        """lors de la phase de jeu, déplace un élément d'un point A à un point B"""
         self.remove_element(label_element)
         label_element.element.x = x
         label_element.element.y = y
@@ -246,9 +265,11 @@ class Plateau(QGridLayout):
             self.player = label_element
 
     def is_valid_position(self, x, y):
+        """vérifie que les coordonnées d'entrée ne sont pas hors-cadre"""
         return 0 <= x <= self.width and 0 <= y <= self.height
 
     def get_falling_elements(self):
+        """renvoie la liste des éléments soumis à la gravité"""
         adjacent_elements = []
         for x in range(self.width):
             for y in range(self.height):
@@ -258,6 +279,7 @@ class Plateau(QGridLayout):
         return adjacent_elements
 
     def move_player(self, x_offset, y_offset, dir=None):
+        """vérifie s'il est possible de déplacer le joueur dans la direction souhaitée, et le déplace si oui"""
         self.player.element.dir = dir
         self.player.element.pixmaps = self.player.element.anim()
         x = self.player.element.x + x_offset
@@ -301,6 +323,7 @@ class Plateau(QGridLayout):
         return 0
 
     def apply_gravity(self, el):
+        """applique la gravité à un élément spécifique du plateau"""
         if self.is_used(el.element.x + 1, el.element.y):
             if isinstance(self.grid[el.element.x + 1][el.element.y].element, Player) and el.element.is_Falling:
                 self.remove_element(self.player)
