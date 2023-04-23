@@ -119,7 +119,7 @@ class LancerBoulderDash(QMainWindow):
             f.write(res)
         print("avancement actuel sauvegardé !")
 
-   def changement_de_plateau(self, niveau):
+    def changement_de_plateau(self, niveau):
         """Auteur : Chloé
         permet de changer le niveau de jeu lors d'un passage à un niveay + difficile"""
         self.widget = Stase()
