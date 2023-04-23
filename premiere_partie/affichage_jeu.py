@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget, QApplication, QListWidget, QGridLayout, QLa
 from PyQt5.QtCore import QTimer
 from premiere_partie import element, jeu
 
-
+"""auteur: Tristan"""
 def cut_image_into_tiles(image, rows=12, cols=24) -> dict:
     if isinstance(image, str) and os.path.exists(image):
         image = QPixmap(image)
@@ -32,6 +32,8 @@ class data_element:
         self.pixmaps = []
 
 
+
+"""permet d'afficher les pierres"""
 class affi_pierre(data_element):
     def __init__(self, tiles):
         super().__init__()
@@ -40,7 +42,7 @@ class affi_pierre(data_element):
         for x in range(4):
             self.pixmaps.append(self.tiles[x, y])
 
-
+"""permet d'afficher le joueur"""
 class affi_joueur(data_element):
     def __init__(self, tiles, dir):
         super().__init__()
@@ -52,7 +54,7 @@ class affi_joueur(data_element):
                 self.pixmaps.append(self.tiles[x, y])
 
 
-
+"""permet d'afficher les diamants"""
 class affi_diams(data_element):
     def __init__(self, tiles):
         super().__init__()
@@ -61,7 +63,7 @@ class affi_diams(data_element):
         for x in range(4):
             self.pixmaps.append(self.tiles[x, y])
 
-
+"""permet d'afficher les briques"""
 class affi_brique(data_element):
     def __init__(self, tiles):
         super().__init__()
@@ -70,7 +72,7 @@ class affi_brique(data_element):
         for x in range(4):
             self.pixmaps.append(self.tiles[0, y])
 
-
+"""permet d'afficher la terre"""
 class affi_terre(data_element):
     def __init__(self, tiles):
         super().__init__()
@@ -125,6 +127,8 @@ class label_joueur(QLabel):
         self.tiles = tiles
         self.pixmaps = affi_joueur(self.tiles, dir).pixmaps
 
+
+"""permet de définir la zone de jeu"""
 class game_zone(QWidget):
     def __init__(self, parent=None):
         super(game_zone, self).__init__(parent)

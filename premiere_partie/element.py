@@ -2,72 +2,105 @@ import random
 
 
 class Element:
+    """ auteur : Chloé
+        x,y : int
+        cette classe permet de définir les coordonnées des éléments
+    """
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
+        self.x = x    #position horizontale
+        self.y = y    #position verticale
 
 
 class Brique(Element):
+    """auteur: Chloé
+        les briques sont éléments qui comme décrit dans la classe ont des coordonnées,
+        ne peuvent pas tomber, ne peuvent pas se pousser, ne peut pas être consommé"""
     def __init__(self, x, y):
-        super().__init__(x, y)
-        self.is_gravity_affected = False
-        self.is_pushable = False
-        self.is_consumable = False
-        self.is_Falling = False
-        self.symbol = "#"
+        super().__init__(x, y)   #position
+        self.is_gravity_affected = False #non affecté gravité
+        self.is_pushable = False  #non déplaçable
+        self.is_consumable = False  #non consommable
+        self.is_Falling = False  #n'est pas en chute
+        self.symbol = "#"      # symbole attribué
 
 
 class Sortie(Element):
+    """auteur: Chloé
+        les sorties (il n'y en a que 2 dans notre jeu)
+        sont repérées par des coordonnées
+        ne subissent pas la gravité, ne peuvent pas être poussées, ne peuvent pas être consommées"""
     def __init__(self, x, y):
-        super().__init__(x, y)
-        self.is_gravity_affected = False
-        self.is_pushable = False
-        self.is_consumable = False
-        self.is_Falling = False
-        self.symbol = "S"
+        super().__init__(x, y) # position
+        self.is_gravity_affected = False # non affecté gravité
+        self.is_pushable = False # non déplaçable
+        self.is_consumable = False  # non consommable
+        self.is_Falling = False   # n'est pas en chute
+        self.symbol = "S"    # symbole attribué
 
 
 class Player(Element):
+    """auteur: Chloé
+            les sorties (il n'y en a que 2 dans notre jeu)
+            est repéré par des coordonnées
+            ne subit pas la gravité, ne peut pas être poussé, ne peut pas être consommé"""
     def __init__(self, x, y):
-        super().__init__(x, y)
-        self.is_gravity_affected = False
-        self.is_pushable = False
-        self.is_consumable = False
-        self.is_Falling = False
-        self.symbol = "P"
+        super().__init__(x, y)    # position
+        self.is_gravity_affected = False   # non affecté gravité
+        self.is_pushable = False # non déplaçable
+        self.is_consumable = False   # non consommable
+        self.is_Falling = False  # n'est pas en chute
+        self.symbol = "P"     # symbole attribué
 
 
 class Diamant(Element):
+    """auteur: Chloé
+            les diamants
+            sont repérées par des coordonnées (car est un élément)
+            subissent la gravité, ne peuvent pas être poussés, consommables"""
     def __init__(self, x, y):
-        super().__init__(x, y)
-        self.is_gravity_affected = True
-        self.is_pushable = False
-        self.is_consumable = True
-        self.is_Falling = False
-        self.symbol = "D"
+        super().__init__(x, y)    # position
+        self.is_gravity_affected = True   # peut-être affecté par la gravité
+        self.is_pushable = False # non déplaçable
+        self.is_consumable = True   # consommable
+        self.is_Falling = False   # n'est pas en chute
+        self.symbol = "D"     # symbole attribué
 
 
 class Pierre(Element):
+    """auteur: Chloé
+        les diamants
+        sont repérées par des coordonnées (car est un élément)
+        subissent la gravité, peuvent être poussés, non consommables"""
     def __init__(self, x, y):
-        super().__init__(x, y)
-        self.is_gravity_affected = True
-        self.is_pushable = True
-        self.is_consumable = False
-        self.is_Falling = False
-        self.symbol = "O"
+        super().__init__(x, y)     # position
+        self.is_gravity_affected = True  # peut-être affecté par la gravité
+        self.is_pushable = True  # déplaçable
+        self.is_consumable = False   # non consommable
+        self.is_Falling = False   # n'est pas en chute
+        self.symbol = "O"    # symbole attribué
 
 
 class Terre(Element):
+    """auteur: Chloé
+        sont repérées par des coordonnées (car est un élément)
+        ne subissent pas la gravité, ne peuvent pas être poussés, consommables"""
     def __init__(self, x, y):
-        super().__init__(x, y)
-        self.is_gravity_affected = False
-        self.is_pushable = False
-        self.is_consumable = True
-        self.is_Falling = False
-        self.symbol = "."
+        super().__init__(x, y)     # position
+        self.is_gravity_affected = False  # non affecté gravité
+        self.is_pushable = False  # non déplaçable
+        self.is_consumable = True    # consommable
+        self.is_Falling = False    # n'est pas en chute
+        self.symbol = "."     # symbole attribué
 
 
 class Plateau:
+    """auteur: Tristan
+        création du plateau
+        définition de la hauteur et de la lareur du plateau
+        permet de définir si un élément se trouve dans le plateau ou non
+        de définir l'impact de la gravité
+        de définir le déplacement du joueur
+        """
     def __init__(self, width, height):
         self.width = width
         self.height = height

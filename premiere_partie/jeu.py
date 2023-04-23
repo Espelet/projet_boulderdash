@@ -4,6 +4,7 @@ from premiere_partie.element import *
 import numpy.random as rd
 import keyboard
 
+"""auteur:Tristan"""
 
 class BoulderDash:
     def __init__(self, width, height, nbr_diams, nbr_pierre, nbr_brick):
