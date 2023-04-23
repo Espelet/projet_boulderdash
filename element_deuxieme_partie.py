@@ -5,7 +5,8 @@ from PyQt5.QtWidgets import QGridLayout, QLabel
 
 
 def cut_image_into_tiles(image, rows=12, cols=24) -> dict:
-    """découpe le tileset en carré de taille 80x80 afin d'assigner à chaque élément un tileset spécifique"""
+    """ auteur : Chloé
+    découpe le tileset en carré de taille 80x80 afin d'assigner à chaque élément un tileset spécifique"""
     if isinstance(image, str) and os.path.exists(image):
         image = QPixmap(image)
     elif not isinstance(image, QPixmap):
@@ -26,7 +27,8 @@ def cut_image_into_tiles(image, rows=12, cols=24) -> dict:
 
 
 class alphabet(dict):
-    """génère un alphabet pour le menu à partir du tileset"""
+    """auteur : Tristan
+    génère un alphabet pour le menu à partir du tileset"""
     def __init__(self):
         super(alphabet, self).__init__()
         self.tiles = cut_image_into_tiles("./images/text.png", 12, 16)
@@ -45,7 +47,8 @@ class alphabet(dict):
 
 
 class Element:
-    """classe régissant les éléments d'un plateau"""
+    """Auteur : Chloé
+    classe régissant les éléments d'un plateau"""
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -63,7 +66,8 @@ class Element:
 
 
 class Brique(Element):
-    """classe définissant l'élément Brique"""
+    """Auteur : Chloé
+    classe définissant l'élément Brique"""
     def __init__(self, x, y, tiles):
         super().__init__(x, y)
         self.is_gravity_affected = False
@@ -77,7 +81,8 @@ class Brique(Element):
 
 
 class Sortie(Element):
-    """classe définissant le joueur"""
+    """Auteur : Chloé
+    classe définissant le joueur"""
     def __init__(self, x, y, tiles):
         super().__init__(x, y)
         self.is_gravity_affected = False
@@ -91,7 +96,8 @@ class Sortie(Element):
 
 
 class Player(Element):
-    """classe définissant le joueur"""
+    """Auteur : Chloé
+    classe définissant le joueur"""
     def __init__(self, x, y, tiles, dir):
         super().__init__(x, y)
         self.is_gravity_affected = False
@@ -103,7 +109,8 @@ class Player(Element):
         self.anim()
 
     def anim(self):
-        """définit le bon tileset à appliquer au joueur en fonction de la direction dans laquelle il l'a déplacé"""
+        """Auteur : Chloé
+        définit le bon tileset à appliquer au joueur en fonction de la direction dans laquelle il l'a déplacé"""
         self.pixmaps = []
         if self.dir is None:
             x = 0
@@ -132,7 +139,8 @@ class Player(Element):
 
 
 class Diamant(Element):
-    """classe définissant l'élément Diamant"""
+    """Auteur : Chloé
+    classe définissant l'élément Diamant"""
     def __init__(self, x, y, tiles):
         super().__init__(x, y)
         self.is_gravity_affected = True
@@ -146,7 +154,8 @@ class Diamant(Element):
 
 
 class Pierre(Element):
-    """classe définissant l'élément Pierre"""
+    """Auteur : Chloé
+    classe définissant l'élément Pierre"""
     def __init__(self, x, y, tiles):
         super().__init__(x, y)
         self.is_gravity_affected = True
@@ -160,7 +169,8 @@ class Pierre(Element):
 
 
 class Terre(Element):
-    """classe définissant l'élément Pierre"""
+    """Auteur : Chloé
+    classe définissant l'élément Pierre"""
     def __init__(self, x, y, tiles):
         super().__init__(x, y)
         self.is_gravity_affected = False
@@ -174,7 +184,8 @@ class Terre(Element):
 
 
 class label_gnr(QLabel):
-    """classe définissant le label permettant le bon affichage sur Qt des != éléments du niveau"""
+    """Auteur : Chloé
+    classe définissant le label permettant le bon affichage sur Qt des != éléments du niveau"""
     def __init__(self, tiles, el):
         super(label_gnr, self).__init__()
         self.tiles = tiles
@@ -183,7 +194,8 @@ class label_gnr(QLabel):
 
 
 class affichage_element:
-    """permet de mettre à jour l'affichage de chaque élément à chaque frame"""
+    """Auteur : Tristan
+    permet de mettre à jour l'affichage de chaque élément à chaque frame"""
     def __init__(self, lbl):
         self.layout = lbl
         self.current_frame = 0
@@ -203,7 +215,8 @@ class affichage_element:
 
 
 class Plateau(QGridLayout):
-    """Plateau sur lequel se crée le niveau ; hérite de la classe QGridLayout"""
+    """Auteur : Tristan
+    Plateau sur lequel se crée le niveau ; hérite de la classe QGridLayout"""
     def __init__(self, width, height, parent=None):
         """initialise le plateau avec les caractéristiqyes qui lui sont associées : dimension, timer, grille"""
         super(Plateau, self).__init__(parent)

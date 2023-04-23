@@ -33,7 +33,8 @@ class LancerBoulderDash(QMainWindow):
         #
 
     def keyPressEvent(self, event):
-        """récupère les entrées clavier du joueur"""
+        """Auteur : Tristan
+        récupère les entrées clavier du joueur"""
         if self.type_widget == "jeu":
             if event.key() == Qt.Key_S:
                 self.widget.bouge('down')
@@ -60,7 +61,8 @@ class LancerBoulderDash(QMainWindow):
                 #
 
     def check_fin(self):
-        """vérifie l'état actuel de la partie en cours"""
+        """Auteur : Chloé
+        vérifie l'état actuel de la partie en cours"""
         a, pt = self.widget.update_plateau()
         if a == 1:  # le joueur est mort
             self.vie -= 1
@@ -85,7 +87,8 @@ class LancerBoulderDash(QMainWindow):
             #
 
     def sauvegarde(self):
-        """permet de sauvegarder un niveau"""
+        """Auteur : Chloé
+        permet de sauvegarder un niveau"""
         list_of_files = os.listdir('./sauv')
         full_path = ["./sauv/{0}".format(x) for x in list_of_files]
         if len(list_of_files) == 5:
@@ -116,8 +119,9 @@ class LancerBoulderDash(QMainWindow):
             f.write(res)
         print("avancement actuel sauvegardé !")
 
-    def changement_de_plateau(self, niveau):
-        """permet de changer le niveau de jeu lors d'un passage à un niveay + difficile"""
+   def changement_de_plateau(self, niveau):
+        """Auteur : Chloé
+        permet de changer le niveau de jeu lors d'un passage à un niveay + difficile"""
         self.widget = Stase()
         self.type_widget = "jeu"
         bd = self.genere_niveau(niveau)
@@ -126,7 +130,8 @@ class LancerBoulderDash(QMainWindow):
         self.widget.show()
 
     def load_niveau(self):
-        """charge un niveau à partir d'une sauvegarde"""
+        """Auteur : Tristan
+        charge un niveau à partir d'une sauvegarde"""
         self.widget.close()
         self.widget = Stase()
         self.type_widget = "jeu"
@@ -146,7 +151,8 @@ class LancerBoulderDash(QMainWindow):
         print("derniere sauvegarde loadée !")
 
     def genere_niveau(self, premiere_ligne, is_sauv=False, sauv=""):
-        """génère le plateau de jeu"""
+        """Auteur : Tristan
+        génère le plateau de jeu"""
         #
         # on fixe les dimensions & l'emplacement de la fenêtre
         self.setFixedSize(1600, 800)
@@ -180,7 +186,8 @@ class LancerBoulderDash(QMainWindow):
             #
 
     def lancer_menu_du_jeu(self):
-        """lance le menu du jeu au démarrage"""
+        """Auteur : Chloé
+        lance le menu du jeu au démarrage"""
         #
         # on fixe les dimensions & l'emplacement de la fenêtre
         self.setFixedSize(1024, 896)

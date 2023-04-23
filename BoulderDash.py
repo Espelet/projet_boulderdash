@@ -4,7 +4,8 @@ from element_deuxieme_partie import *
 
 
 class Stase(QWidget):
-    """classe de transition entre chaque chargement de niveau"""
+    """Auteur : Chloé
+    classe de transition entre chaque chargement de niveau"""
 
     def __init__(self):
         super(Stase, self).__init__()
@@ -16,7 +17,8 @@ class Stase(QWidget):
 
 
 class BoulderDash(QWidget):
-    """classe générant un niveau de jeu"""
+    """Auteur : Tristan
+    classe générant un niveau de jeu"""
 
     def __init__(self, width, height, premiere_ligne, parent=None):
         """crée le niveau en fonction des paramètres d'entrée"""
@@ -100,7 +102,8 @@ class BoulderDash(QWidget):
             self.score += self.P.move_player(0, 1, 'right')
 
     def centrer_vue(self):
-        """calcule les coordonnées que doit avoir le centre du cadre pour que la vue soit centrée"""
+        """Auteur : Chloé
+        calcule les coordonnées que doit avoir le centre du cadre pour que la vue soit centrée"""
         l, t = 0, 0
         if self.P.player is None:
             return

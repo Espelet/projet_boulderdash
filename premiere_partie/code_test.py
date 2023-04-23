@@ -2,7 +2,6 @@ import unittest
 from jeu import *
 
 """auteur: Chloé"""
-
 class TestJeu(unittest.TestCase):
     def setUp(self):
         self.plateau = Plateau(10, 10)
