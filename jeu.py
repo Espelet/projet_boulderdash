@@ -58,10 +58,17 @@ class LancerBoulderDash(QMainWindow):
                 self.vie = 3
                 self.changement_de_plateau(self.niveau_actuel)
                 #
-                #
+
     def score_board(self):
-        with open("scores.txt", "a") as f:
-            f.write(str(self.s) + "\n")
+        with open("score_board.txt",'r' ) as s1 :
+            scores=s1.readlines()  # On ouvre le fichier scores.txt en mode lecture
+        with open("scores.txt", "r") as f:
+            scores = f.readlines()   # On lit tous les scores existants et on les stocke dans une liste
+        scores.append(str(score) + "\n")   # On ajoute le score actuel à la liste
+        scores = sorted(scores, reverse=True) # On trie les scores en ordre décroissant
+        scores = scores[:5]   # On ne garde que les cinq meilleurs scores
+        with open("scores.txt", "w") as s2:
+            s2.writelines(scores) # On réécrit le fichier scores.txt avec les cinq meilleurs scores
 
     def check_fin(self):
         """Auteur : Chloé
