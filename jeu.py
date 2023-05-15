@@ -2,8 +2,9 @@ import sys
 import time
 from PyQt5.Qt import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QMutex
+from PyQt5.QtCore import QMutex, QUrl
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QVBoxLayout
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from MenuDuJeu import *
 from BoulderDash import *
 
@@ -20,8 +21,6 @@ class LancerBoulderDash(QMainWindow):
         self.type_widget = "menu"
         self.setCentralWidget(self.widget)
         #
-        #
-        #
         # lancer le minuteur permettant le mise à jour du plateau
         self.timer = QTimer()
         self.timer.timeout.connect(self.check_fin)
@@ -33,6 +32,15 @@ class LancerBoulderDash(QMainWindow):
         self._mutex = QMutex()
         #
         #
+    def init_audio(self):
+        # Chargement et lecture de la musique d'arrière-plan
+        self.player = QMediaPlayer()
+        url = QUrl.fromLocalFile("images/Boulder_Das_music.mp3")
+        content = QMediaContent(url)
+        self.player.setMedia(content)
+        self.player.setVolume(50)
+        self.player.stateChanged.connect(self.handleStateChanged)
+        self.player.play()
 
     def keyPressEvent(self, event):
         """Auteur : Tristan
@@ -175,6 +183,12 @@ class LancerBoulderDash(QMainWindow):
         self.widget.show()
         print("derniere sauvegarde loadée !")
 
+    def handleStateChanged(self, state):
+        """réinitialise la musique quand elle s'arrête"""
+        if state == QMediaPlayer.StoppedState:
+            self.player.setPosition(0)
+            self.player.play()
+
     def genere_niveau(self, premiere_ligne, is_sauv=False, sauv=""):
         """Auteur : Tristan
         génère le plateau de jeu"""
@@ -186,6 +200,10 @@ class LancerBoulderDash(QMainWindow):
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
+
+        # On charge la musique et on la joue
+        self.init_audio()
+
         if is_sauv:
             #
             # on génère le niveau
