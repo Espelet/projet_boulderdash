@@ -2,8 +2,8 @@ import sys
 import time
 from PyQt5.Qt import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QMutex, QObject, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QVBoxLayout, QHBoxLayout, QStackedLayout
+from PyQt5.QtCore import QMutex
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QVBoxLayout
 from MenuDuJeu import *
 from BoulderDash import *
 
@@ -145,13 +145,9 @@ class LancerBoulderDash(QMainWindow):
         self.widget = Stase()
         self.type_widget = "jeu"
         bd = self.genere_niveau(niveau)
-        self.widgetInfo = InfoAlEcran(0, 0, parent=self)
-        self.widgetInfo.setGeometry(self.geometry())
         self.widget = bd
         self.setCentralWidget(self.widget)
         self.widget.show()
-        self.widgetInfo.show()
-
 
     def load_niveau(self):
         """Auteur : Tristan
@@ -165,14 +161,18 @@ class LancerBoulderDash(QMainWindow):
         with open(oldest_file, "r") as f:
             premiere_ligne = int(f.readlines()[0].strip().split(' : ')[1])
             f.close()
+        print('ras')
         self.niveau_actuel = premiere_ligne
         bd = self.genere_niveau(premiere_ligne, is_sauv=True, sauv=oldest_file)
+        print('ras')
         self.widget = bd
-        self.widgetInfo = InfoAlEcran(0, 0, parent=self)
-        self.widgetInfo.setGeometry(self.geometry())
+        self.widgetInfo = InfoAlEcran(0, 0)
+        overlay_layout = QVBoxLayout(self)
+        overlay_layout.addWidget(self.widget)
+        overlay_layout.addWidget(self.widgetInfo)
+        self.setLayout(overlay_layout)
         self.setCentralWidget(self.widget)
         self.widget.show()
-        self.widgetInfo.show()
         print("derniere sauvegarde loadée !")
 
     def genere_niveau(self, premiere_ligne, is_sauv=False, sauv=""):
@@ -235,13 +235,6 @@ class LancerBoulderDash(QMainWindow):
         """donne la première ligne du fichier des niveaux à lire pour générer le deuxième niveau"""
         ligne_a_lire = 30  # premiere ligne du fichier des niveaux à lire correspondant au niveau 2
         return ligne_a_lire
-
-    def moveEvent(self, event):
-        # Émettre le signal de déplacement de la fenêtre
-        self.windowMoved.emit()
-
-    # Définition du signal de déplacement de la fenêtre
-    windowMoved = pyqtSignal()
 
 
 if __name__ == "__main__":
