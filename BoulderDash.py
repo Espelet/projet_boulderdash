@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QWidget
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from math import *
 from element_deuxieme_partie import *
 
@@ -175,12 +176,6 @@ class BoulderDash(QWidget):
         return None, None
 
 
-class score(QWidget):
-    def __init__(self, score):
-        super(score, self).__init__()
-        self.score = score
-
-
 stylesheet_jeu = """
     LancerBoulderDash {
         background-image: url('./images/background.png'); 
@@ -189,8 +184,38 @@ stylesheet_jeu = """
 
 
 class InfoAlEcran(QWidget):
-    def __init__(self, temps, score):
-        super(InfoAlEcran, self).__init__()
-        self.temps = temps
+    def __init__(self, score, temps, parent=None):
+        super().__init__(parent)
         self.score = score
+        self.temps = temps
+        # Créer le widget de l'overlay
+        self.overlay_label = QLabel(self)
+        self.overlay_label.setGeometry(50, 50, 218, 158)  # Position et taille de l'overlay
+        self.overlay_label.setStyleSheet(
+            "background-image: url('./images/t_diams.png');")  # Style de l'overlay (fond rouge transparent)
+
+        # Rendre l'overlay transparent
+        self.setWindowFlags(
+            self.windowFlags() | QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.Tool)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+        # Connecter le signal de déplacement de la fenêtre à la mise à jour de la position de l'overlay
+        self.parent().windowMoved.connect(self.updateOverlayPosition)
+
+    def paintEvent(self, event):
+        # Dessiner le fond transparent de l'overlay
+        painter = QtGui.QPainter(self)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+        painter.setCompositionMode(QtGui.QPainter.CompositionMode_Clear)
+        painter.fillRect(self.rect(), QtGui.QColor(0, 0, 0, 0))
+
+    def updateOverlayPosition(self):
+        # Mettre à jour la position de l'overlay en fonction de la position de la fenêtre principale
+        parent_position = self.parent().pos()
+        self.move(parent_position.x(), parent_position.y()+25)  # Définir la nouvelle position de l'overlay
+
+
+
+
+
 
