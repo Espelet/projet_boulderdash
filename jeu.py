@@ -1,6 +1,7 @@
 import sys
 import time
 from PyQt5.Qt import Qt
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QMutex
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QVBoxLayout
 from MenuDuJeu import *
@@ -14,6 +15,7 @@ class LancerBoulderDash(QMainWindow):
         #
         # lance le menu
         self.setWindowTitle('BoulderDash')
+        self.setWindowIcon(QIcon("images\player_decoupe.png"))  # Ajouter une icône dans la barre de titre
         self.widget = self.lancer_menu_du_jeu()
         self.type_widget = "menu"
         self.setCentralWidget(self.widget)
