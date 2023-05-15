@@ -2,7 +2,7 @@ import sys
 import time
 from PyQt5.Qt import Qt
 from PyQt5.QtCore import QMutex
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QVBoxLayout
 from MenuDuJeu import *
 from BoulderDash import *
 
@@ -45,6 +45,13 @@ class LancerBoulderDash(QMainWindow):
             elif event.key() == Qt.Key_D:
                 self.widget.bouge('right')
             elif event.key() == Qt.Key_Escape:
+                self.vie -= 1
+                print("Il reste " + str(self.vie) + " vie(s)")
+                if self.vie == 0:
+                    print("NUL NUL NUL !")
+                    print("score : ", self.s)
+                    self.score_board(self.s)
+                    self.close()
                 self.changement_de_plateau(self.niveau_actuel)
             elif event.key() == Qt.Key_N:
                 self.sauvegarde()
@@ -59,16 +66,16 @@ class LancerBoulderDash(QMainWindow):
                 self.changement_de_plateau(self.niveau_actuel)
                 #
 
-    def score_board(self):
-        with open("score_board.txt",'r' ) as s1 :
-            scores=s1.readlines()  # On ouvre le fichier scores.txt en mode lecture
-        with open("scores.txt", "r") as f:
+    def score_board(self, score):
+        with open("score_board.txt", "r") as f:
             scores = f.readlines()   # On lit tous les scores existants et on les stocke dans une liste
         scores.append(str(score) + "\n")   # On ajoute le score actuel à la liste
         scores = sorted(scores, reverse=True) # On trie les scores en ordre décroissant
         scores = scores[:5]   # On ne garde que les cinq meilleurs scores
-        with open("scores.txt", "w") as s2:
-            s2.writelines(scores) # On réécrit le fichier scores.txt avec les cinq meilleurs scores
+        with open("score_board.txt", "w") as s2:
+            s2.writelines(scores)  # On réécrit le fichier scores.txt avec les cinq meilleurs scores
+        print(scores)
+        print("bien joué, temps inscrit au scoreboard") if str(score)+"\n" in scores else None
 
     def check_fin(self):
         """Auteur : Chloé
@@ -79,6 +86,7 @@ class LancerBoulderDash(QMainWindow):
             if self.vie == 0:
                 print("NUL NUL NUL !")
                 print("score : ", self.s)
+                self.score_board(self.s)
                 self.close()
             if self.vie > 0:
                 print("Vie restante : ", self.vie)
@@ -156,6 +164,11 @@ class LancerBoulderDash(QMainWindow):
         bd = self.genere_niveau(premiere_ligne, is_sauv=True, sauv=oldest_file)
         print('ras')
         self.widget = bd
+        self.widgetInfo = InfoAlEcran(0, 0)
+        overlay_layout = QVBoxLayout(self)
+        overlay_layout.addWidget(self.widget)
+        overlay_layout.addWidget(self.widgetInfo)
+        self.setLayout(overlay_layout)
         self.setCentralWidget(self.widget)
         self.widget.show()
         print("derniere sauvegarde loadée !")

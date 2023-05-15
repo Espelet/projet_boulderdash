@@ -186,3 +186,11 @@ stylesheet_jeu = """
         background-image: url('./images/background.png'); 
     }
 """
+
+
+class InfoAlEcran(QWidget):
+    def __init__(self, temps, score):
+        super(InfoAlEcran, self).__init__()
+        self.temps = temps
+        self.score = score
+
