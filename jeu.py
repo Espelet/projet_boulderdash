@@ -59,6 +59,9 @@ class LancerBoulderDash(QMainWindow):
                 self.changement_de_plateau(self.niveau_actuel)
                 #
                 #
+    def score_board(self):
+        with open("scores.txt", "a") as f:
+            f.write(str(self.s) + "\n")
 
     def check_fin(self):
         """Auteur : Chloé
