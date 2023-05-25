@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QWidget
 from math import *
 from element_deuxieme_partie import *
 
@@ -176,6 +176,7 @@ class BoulderDash(QWidget):
         return None, None
 
 
+
 stylesheet_jeu = """
     LancerBoulderDash {
         background-image: url('./images/background.png'); 
@@ -198,9 +199,9 @@ class InfoAlEcran(QWidget):
         self.setWindowFlags(
             self.windowFlags() | QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.Tool)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-
         # Connecter le signal de déplacement de la fenêtre à la mise à jour de la position de l'overlay
         self.parent().windowMoved.connect(self.updateOverlayPosition)
+        print('okkkk')
 
     def paintEvent(self, event):
         # Dessiner le fond transparent de l'overlay
