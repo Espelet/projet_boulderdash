@@ -3,7 +3,8 @@ import time
 from PyQt5.Qt import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QMutex
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtCore import pyqtSignal
 from MenuDuJeu import *
 from BoulderDash import *
@@ -34,6 +35,16 @@ class LancerBoulderDash(QMainWindow):
         self._mutex = QMutex()
         #
         #
+
+    def init_audio(self):
+        # Chargement et lecture de la musique d'arrière-plan
+        self.player = QMediaPlayer()
+        url = QUrl.fromLocalFile("images/Boulder_Das_music.mp3")
+        content = QMediaContent(url)
+        self.player.setMedia(content)
+        self.player.setVolume(50)
+        self.player.stateChanged.connect(self.handleStateChanged)
+        self.player.play()
 
     def keyPressEvent(self, event):
         """Auteur : Tristan
@@ -84,6 +95,10 @@ class LancerBoulderDash(QMainWindow):
         """Auteur : Chloé
         vérifie l'état actuel de la partie en cours"""
         a, pt = self.widget.update_plateau()
+        self.n += 1
+        if self.type_widget == "jeu" and self.n >= 20:
+            print("oui", pt)
+            self.widgetInfo.updateScore(pt)
         if a == 1:  # le joueur est mort
             self.vie -= 1
             if self.vie == 0:
@@ -145,9 +160,13 @@ class LancerBoulderDash(QMainWindow):
         permet de changer le niveau de jeu lors d'un passage à un niveay + difficile"""
         self.widget = Stase()
         self.type_widget = "jeu"
+        self.n = 0
         bd = self.genere_niveau(niveau)
         self.widget = bd
+        self.widgetInfo = InfoAlEcran(0, 0, self)
+        self.widgetInfo.setGeometry(self.geometry())
         self.setCentralWidget(self.widget)
+        self.widgetInfo.show()
         self.widget.show()
 
     def load_niveau(self):
@@ -172,6 +191,12 @@ class LancerBoulderDash(QMainWindow):
         self.widget.show()
         print("derniere sauvegarde loadée !")
 
+    def handleStateChanged(self, state):
+        """réinitialise la musique quand elle s'arrête"""
+        if state == QMediaPlayer.StoppedState:
+            self.player.setPosition(0)
+            self.player.play()
+
     def genere_niveau(self, premiere_ligne, is_sauv=False, sauv=""):
         """Auteur : Tristan
         génère le plateau de jeu"""
@@ -183,6 +208,10 @@ class LancerBoulderDash(QMainWindow):
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
+
+        # On charge la musique et on la joue
+        self.init_audio()
+
         if is_sauv:
             #
             # on génère le niveau

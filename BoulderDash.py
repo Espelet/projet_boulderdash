@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget
 from math import *
 from element_deuxieme_partie import *
@@ -173,7 +174,7 @@ class BoulderDash(QWidget):
                 print("fin des haricots !")
                 self.close()
                 return 1, self.score
-        return None, None
+        return None, self.score
 
 
 
@@ -187,13 +188,11 @@ stylesheet_jeu = """
 class InfoAlEcran(QWidget):
     def __init__(self, score, temps, parent=None):
         super().__init__(parent)
-        self.score = score
-        self.temps = temps
         # Créer le widget de l'overlay
         self.overlay_label = QLabel(self)
-        self.overlay_label.setGeometry(50, 50, 218, 158)  # Position et taille de l'overlay
+        self.overlay_label.setGeometry(25, 25, 218, 158)  # Position et taille de l'overlay
         self.overlay_label.setStyleSheet(
-            "background-image: url('./images/t_diams.png');")  # Style de l'overlay (fond rouge transparent)
+            "background-image: url('./images/t_diams.png');br {line-height: 5px;}")  # Style de l'overlay (fond rouge transparent)
 
         # Rendre l'overlay transparent
         self.setWindowFlags(
@@ -201,7 +200,7 @@ class InfoAlEcran(QWidget):
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         # Connecter le signal de déplacement de la fenêtre à la mise à jour de la position de l'overlay
         self.parent().windowMoved.connect(self.updateOverlayPosition)
-        print('okkkk')
+        self.updateScore(score)
 
     def paintEvent(self, event):
         # Dessiner le fond transparent de l'overlay
@@ -215,8 +214,18 @@ class InfoAlEcran(QWidget):
         parent_position = self.parent().pos()
         self.move(parent_position.x(), parent_position.y()+25)  # Définir la nouvelle position de l'overlay
 
+    def updateTemps(self, temps):
+        self.lbl_temps.setFont(QFont('Arial', 10))
+        self.lbl_temps.setStyleSheet("QLabel { background-color : black; color : white; }")
+        print("ok1")
+        self.lbl_temps.setText(str(temps))
 
-
+    def updateScore(self, score):
+        font = QFont('Arial', 24)
+        self.overlay_label.setFont(font)
+        self.overlay_label.setAlignment(QtCore.Qt.AlignRight)
+        self.overlay_label.setIndent(20)
+        self.overlay_label.setText("<font color='white'><br>" + str(int(score/10)) + "</font>")
 
 
 
