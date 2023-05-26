@@ -2,7 +2,7 @@ import sys
 import time
 from PyQt5.Qt import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QMutex
+from PyQt5.QtCore import QMutex, QUrl
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtCore import pyqtSignal
@@ -79,6 +79,8 @@ class LancerBoulderDash(QMainWindow):
                 self.vie = 3
                 self.changement_de_plateau(self.niveau_actuel)
                 #
+            elif event.key() == Qt.Key_L:
+                self.load_niveau()
 
     def score_board(self, score):
         with open("score_board.txt", "r") as f:
@@ -96,9 +98,8 @@ class LancerBoulderDash(QMainWindow):
         vérifie l'état actuel de la partie en cours"""
         a, pt = self.widget.update_plateau()
         self.n += 1
-        if self.type_widget == "jeu" and self.n >= 20:
-            print("oui", pt)
-            self.widgetInfo.updateScore(pt)
+        if self.type_widget == "jeu":
+            self.widgetInfo.updateScore(pt, self.widget.temps_imparti, self.s, self.vie)
         if a == 1:  # le joueur est mort
             self.vie -= 1
             if self.vie == 0:
@@ -127,7 +128,7 @@ class LancerBoulderDash(QMainWindow):
         permet de sauvegarder un niveau"""
         list_of_files = os.listdir('./sauv')
         full_path = ["./sauv/{0}".format(x) for x in list_of_files]
-        if len(list_of_files) == 5:
+        if len(list_of_files) == 1:
             oldest_file = min(full_path, key=os.path.getctime)
             os.remove(oldest_file)
 
@@ -163,7 +164,7 @@ class LancerBoulderDash(QMainWindow):
         self.n = 0
         bd = self.genere_niveau(niveau)
         self.widget = bd
-        self.widgetInfo = InfoAlEcran(0, 0, self)
+        self.widgetInfo = InfoAlEcran(self)
         self.widgetInfo.setGeometry(self.geometry())
         self.setCentralWidget(self.widget)
         self.widgetInfo.show()
@@ -184,7 +185,7 @@ class LancerBoulderDash(QMainWindow):
         self.niveau_actuel = premiere_ligne
         bd = self.genere_niveau(premiere_ligne, is_sauv=True, sauv=oldest_file)
         self.widget = bd
-        self.widgetInfo = InfoAlEcran(0, 0, self)
+        self.widgetInfo = InfoAlEcran(self)
         self.widgetInfo.setGeometry(self.geometry())
         self.setCentralWidget(self.widget)
         self.widgetInfo.show()

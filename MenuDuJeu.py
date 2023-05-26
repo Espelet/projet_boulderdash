@@ -22,16 +22,30 @@ class MenuDuJeu(QWidget):
         return 15, 0
 
     def write(self):
-        """permet d'écrire HSCORE sur le menu, sujet à modification"""
+        """permet d'écrire HSCORE sur le menu avec le meilleur score enregistré"""
         asci = self.wrt
-        liste_hscore = [[(1, 7), asci["h"]], [(1, 8), asci["s"]], [(1, 9), asci["c"]], [(1, 10), asci["o"]],
+        liste_txt = [[(1, 7), asci["h"]], [(1, 8), asci["s"]], [(1, 9), asci["c"]], [(1, 10), asci["o"]],
                         [(1, 11), asci["r"]], [(1, 12), asci["e"]]]
+        with open("score_board.txt", "r") as f:
+            scores = f.readline().split('\n')[0]   # On lit tous les scores existants et on les stocke dans une liste
+        for k, i in enumerate(scores):
+            liste_txt.append([(1, 14+k), asci[i]])
+        liste_txt += [[(13, 5), asci['a']], [(13, 6), asci['p']], [(13, 7), asci['p']], [(13, 8), asci['u']],
+                      [(13, 9), asci['y']], [(13, 10), asci['e']], [(13, 11), asci['r']], [(13, 12), asci[' ']],
+                      [(13, 13), asci['s']], [(13, 14), asci['u']], [(13, 15), asci['r']], [(13, 16), asci[' ']],
+                      [(13, 17), asci['e']], [(13, 18), asci['n']], [(13, 19), asci['t']], [(13, 20), asci['r']],
+                      [(13, 21), asci['e']], [(13, 22), asci['e']], [(14, 4), asci['p']], [(14, 5), asci['o']],
+                      [(14, 6), asci['u']], [(14, 7), asci['r']], [(14, 8), asci[' ']], [(14, 9), asci['n']],
+                      [(14, 10), asci['o']], [(14, 11), asci['u']], [(14, 12), asci['v']], [(14, 13), asci['e']],
+                      [(14, 14), asci['l']], [(14, 15), asci['l']], [(14, 16), asci['e']],[(14, 17), asci[' ']],
+                      [(14, 18), asci['p']], [(14, 19), asci['a']], [(14, 20), asci['r']], [(14, 21), asci['t']],
+                      [(14, 22), asci['i']], [(14, 23), asci['e']]]
         for k in range(28):
             for n in range(23):
                 lbl = QLabel("lbl")
                 lbl.setPixmap(asci[" "])
                 self.layout.addWidget(lbl, n, k)
-        for a in liste_hscore:
+        for a in liste_txt:
             lbl = QLabel("lbl")
             lbl.setPixmap(a[1])
             self.layout.addWidget(lbl, a[0][0], a[0][1])
