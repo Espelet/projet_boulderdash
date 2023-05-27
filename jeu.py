@@ -128,7 +128,7 @@ class LancerBoulderDash(QMainWindow):
         permet de sauvegarder un niveau"""
         list_of_files = os.listdir('./sauv')
         full_path = ["./sauv/{0}".format(x) for x in list_of_files]
-        if len(list_of_files) == 1:
+        if len(list_of_files) >= 1:
             oldest_file = min(full_path, key=os.path.getctime)
             os.remove(oldest_file)
 
