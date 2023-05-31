@@ -209,9 +209,9 @@ class InfoAlEcran(QWidget):
                                 """)
         font = QFont('Arial', 24)
         self.info.setFont(font)
-        self.info.setAlignment(QtCore.Qt.AlignCenter)
-        self.info.setIndent(0)
-        self.info.setText("<p style= 'line-height:5%'><font color='white'><br>" + "N : Sauvegarde" +
+        self.info.setAlignment(QtCore.Qt.AlignRight)
+        self.info.setIndent(40)
+        self.info.setText("<p style= 'line-height:60%'><font color='white'><br>" + "N : Sauvegarde" +
                              "</font></p>")
 
         self.vie_lbl = QLabel(self)
@@ -242,6 +242,7 @@ class InfoAlEcran(QWidget):
         self.move(parent_position.x(), parent_position.y() + 25)  # Définir la nouvelle position de l'overlay
 
     def updateScore(self, score, temps, s, vie):
+        """met à jour le score, le nombre de vies, le nombre de diamants récupérés et le temps restant"""
         font = QFont('Arial', 24)
         self.overlay_label.setFont(font)
         self.overlay_label.setAlignment(QtCore.Qt.AlignRight)
