@@ -61,8 +61,7 @@ class BoulderDash(QWidget):
             f.close()
 
     def generate(self, fichier_a_lire="./niveau/A.txt"):
-        """génère le terrain de jeu à partir d'un fichier texte qui représente par les lettres M, D, J, T, P
-        les différents éléments du jeu"""
+        """génère le terrain de jeu"""
         self.recup_data_niveau()
         if fichier_a_lire != "./niveau/A.txt":
             self.premiere_ligne = 0

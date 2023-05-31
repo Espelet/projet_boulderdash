@@ -32,7 +32,6 @@ class LancerBoulderDash(QMainWindow):
         self.a_bouge = 0
         self.vie = 0
         self.s = 0
-        self.n = 0
         self.timer.start(125)
         self.niveau_actuel = None
         self._mutex = QMutex()
@@ -188,7 +187,6 @@ class LancerBoulderDash(QMainWindow):
         self.widget = Stase()
         self.widgetInfo = Stase()
         self.type_widget = "jeu"
-        self.n = 0
         bd = self.genere_niveau(niveau)
         self.widget = bd
         self.widgetInfo = InfoAlEcran(self)
