@@ -52,7 +52,8 @@ class BoulderDash(QWidget):
         self.n = 0
 
     def recup_data_niveau(self):
-        """récupère les informations permettant la bonne mise en place du niveau"""
+        """Auteur : Chloé
+        récupère les informations permettant la bonne mise en place du niveau"""
         with open("./niveau/A.txt", "r") as f:
             lines = f.readlines()[self.premiere_ligne:]
             self.y_sortie, self.x_sortie = tuple(map(int, lines[1].strip().split(' : ')[1].split(', ')))
@@ -61,7 +62,8 @@ class BoulderDash(QWidget):
             f.close()
 
     def generate(self, fichier_a_lire="./niveau/A.txt"):
-        """génère le terrain de jeu"""
+        """Auteur : Tristan
+        génère le terrain de jeu"""
         self.recup_data_niveau()
         if fichier_a_lire != "./niveau/A.txt":
             self.premiere_ligne = 0
@@ -93,7 +95,8 @@ class BoulderDash(QWidget):
             self.falling_ent = self.P.get_falling_elements()
 
     def bouge(self, dir):
-        """assigne à chaque entrée du joueur une action"""
+        """Auteur : Chloé
+        assigne à chaque entrée du joueur une action"""
         if dir == 'down':
             self.score += self.P.move_player(1, 0, 'down')
         elif dir == 'up':
@@ -125,7 +128,8 @@ class BoulderDash(QWidget):
             return l, t
 
     def mouvement_plateau(self):
-        """permet de fluidifier le mouvement du cadre lorsque celui-ci se déplace pour centrer la vue"""
+        """Auteur : Tristan
+        permet de fluidifier le mouvement du cadre lorsque celui-ci se déplace pour centrer la vue"""
         if self.mvt_plateau:
             if self.l_sv == self.l and self.t_sv == self.t:
                 self.l_sv = self.l
@@ -149,7 +153,8 @@ class BoulderDash(QWidget):
                 self.mvt_plateau = False
 
     def verif_temps(self):
-        """vérifie que le temps imparti pour finir le niveau ne s'est pas écoulé"""
+        """Auteur : Tristan
+        vérifie que le temps imparti pour finir le niveau ne s'est pas écoulé"""
         return True if self.temps_imparti == 0 else False
 
     def update_plateau(self):
@@ -157,18 +162,21 @@ class BoulderDash(QWidget):
         self.n += 1
         if self.n % 8 == 0:
             self.temps_imparti -= 1
-        if isinstance(self.P.player.element, Sortie):
+        if isinstance(self.P.player.element, Sortie): # si les coordonnées du joueur et de la sortie coincide, fin de partie
             print("fin de la partie, bravo !")
             return 0, self.score + self.temps_imparti
+        #
 
+        #  Création de la porte de sortie lorsque le score atteint la valeur demandée par le niveau
         if self.score / 10 >= self.score_a_atteindre and not self.P.is_element(Sortie):
             self.P.remove_element(self.P.itemAtPosition(self.y_sortie - 1, self.x_sortie - 1).widget())
             self.P.add_element_on_grid(Sortie(self.y_sortie - 1, self.x_sortie - 1, self.P.tiles_element))
+        #
 
-        self.falling_ent = self.P.get_falling_elements()
+        self.falling_ent = self.P.get_falling_elements() # récupération des éléments soumis à la gravité
         for el in self.falling_ent:
             t = self.P.apply_gravity(el)
-            if t or self.verif_temps():
+            if t or self.verif_temps(): # si le joueur est mort ou le temps est écoulé, fin du niveau
                 print("fin des haricots !")
                 self.close()
                 return 1, self.score
@@ -183,9 +191,10 @@ stylesheet_jeu = """
 
 
 class InfoAlEcran(QWidget):
+    """Permet d'afficher toutes les informations concernant la partie en cours à l'écran"""
     def __init__(self, parent=None):
         super().__init__(parent)
-        # Créer le widget de l'overlay
+        # Créer tous les labels de l'overlay
         self.overlay_label = QLabel(self)
         self.overlay_label.setGeometry(25, 25, 218, 158)  # Position et taille de l'overlay
         self.overlay_label.setStyleSheet("""
