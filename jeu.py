@@ -29,9 +29,10 @@ class LancerBoulderDash(QMainWindow):
         # lancer le minuteur permettant le mise à jour du plateau
         self.timer = QTimer()
         self.timer.timeout.connect(self.check_fin)
-        self.n = 0
+        self.a_bouge = 0
         self.vie = 0
         self.s = 0
+        self.n = 0
         self.timer.start(125)
         self.niveau_actuel = None
         self._mutex = QMutex()
@@ -54,12 +55,16 @@ class LancerBoulderDash(QMainWindow):
         if self.type_widget == "jeu":
             if event.key() == Qt.Key_S:
                 self.widget.bouge('down')
+                self.a_bouge = self.widget.temps_imparti
             elif event.key() == Qt.Key_Z:
                 self.widget.bouge('up')
+                self.a_bouge = self.widget.temps_imparti
             elif event.key() == Qt.Key_Q:
                 self.widget.bouge('left')
+                self.a_bouge = self.widget.temps_imparti
             elif event.key() == Qt.Key_D:
                 self.widget.bouge('right')
+                self.a_bouge = self.widget.temps_imparti
             elif event.key() == Qt.Key_Escape:
                 self.vie -= 1
                 print("Il reste " + str(self.vie) + " vie(s)")
@@ -67,7 +72,10 @@ class LancerBoulderDash(QMainWindow):
                     print("NUL NUL NUL !")
                     print("score : ", self.s)
                     self.score_board(self.s)
+                    self.widgetInfo.close()
+                    self.widget.close()
                     self.close()
+                    return
                 self.changement_de_plateau(self.niveau_actuel)
             elif event.key() == Qt.Key_N:
                 self.sauvegarde()
@@ -99,17 +107,19 @@ class LancerBoulderDash(QMainWindow):
         """Auteur : Chloé
         vérifie l'état actuel de la partie en cours"""
         a, pt = self.widget.update_plateau()
-        self.n += 1
         if self.type_widget == "jeu":
             self.widgetInfo.updateScore(pt, self.widget.temps_imparti, self.s, self.vie)
+            if self.a_bouge - self.widget.temps_imparti >= 2:
+                self.widget.P.move_player(0, 0, None)
+                self.a_bouge = 0
         if a == 1:  # le joueur est mort
             self.vie -= 1
             if self.vie == 0:
                 print("NUL NUL NUL !")
                 print("score : ", self.s)
                 self.score_board(self.s)
-                self.widget.close()
                 self.widgetInfo.close()
+                self.widget.close()
                 self.close()
             if self.vie > 0:
                 print("Vie restante : ", self.vie)
@@ -127,6 +137,7 @@ class LancerBoulderDash(QMainWindow):
                 self.niveau_actuel = self.niveau_suivant
                 self.changement_de_plateau(self.niveau_actuel)
             else:
+                self.score_board(self.s)
                 self.widget.close()
                 self.widgetInfo.hide()
                 self.type_widget = "menu"
@@ -175,6 +186,7 @@ class LancerBoulderDash(QMainWindow):
         """Auteur : Chloé
         permet de changer le niveau de jeu lors d'un passage à un niveay + difficile"""
         self.widget = Stase()
+        self.widgetInfo = Stase()
         self.type_widget = "jeu"
         self.n = 0
         bd = self.genere_niveau(niveau)
