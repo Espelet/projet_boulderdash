@@ -1,3 +1,5 @@
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QWidget
 from math import *
 from element_deuxieme_partie import *
@@ -155,13 +157,11 @@ class BoulderDash(QWidget):
         self.n += 1
         if self.n % 8 == 0:
             self.temps_imparti -= 1
-            print(self.temps_imparti)
         if isinstance(self.P.player.element, Sortie):
             print("fin de la partie, bravo !")
             return 0, self.score + self.temps_imparti
 
         if self.score / 10 >= self.score_a_atteindre and not self.P.is_element(Sortie):
-            self.P.point_par_diamant = 15
             self.P.remove_element(self.P.itemAtPosition(self.y_sortie - 1, self.x_sortie - 1).widget())
             self.P.add_element_on_grid(Sortie(self.y_sortie - 1, self.x_sortie - 1, self.P.tiles_element))
 
@@ -172,13 +172,7 @@ class BoulderDash(QWidget):
                 print("fin des haricots !")
                 self.close()
                 return 1, self.score
-        return None, None
-
-
-class score(QWidget):
-    def __init__(self, score):
-        super(score, self).__init__()
-        self.score = score
+        return None, self.score
 
 
 stylesheet_jeu = """
@@ -189,8 +183,66 @@ stylesheet_jeu = """
 
 
 class InfoAlEcran(QWidget):
-    def __init__(self, temps, score):
-        super(InfoAlEcran, self).__init__()
-        self.temps = temps
-        self.score = score
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        # Créer le widget de l'overlay
+        self.overlay_label = QLabel(self)
+        self.overlay_label.setGeometry(25, 25, 218, 158)  # Position et taille de l'overlay
+        self.overlay_label.setStyleSheet("""
+                    QLabel {
+                        background-image: url('./images/t_diams.png');
+                    }
+                """)
+        self.score_lbl = QLabel(self)
+        self.score_lbl.setGeometry(655, 10, 293, 79)
+        self.score_lbl.setStyleSheet("""
+                            QLabel {
+                                background-image: url('./images/t_score.png');
+                            }
+                        """)
+        self.vie_lbl = QLabel(self)
+        self.vie_lbl.setGeometry(25, 183, 218, 79)
+        self.vie_lbl.setStyleSheet("""
+                                    QLabel {
+                                        background-image: url('./images/t_coeur.png');
+                                    }
+                                """)
+        # Rendre l'overlay transparent
+        self.setWindowFlags(
+            self.windowFlags() | QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.Tool)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        # Connecter le signal de déplacement de la fenêtre à la mise à jour de la position de l'overlay
+        self.parent().windowMoved.connect(self.updateOverlayPosition)
+        self.updateScore(0, 0, 0, 0)
 
+    def paintEvent(self, event):
+        # Dessiner le fond transparent de l'overlay
+        painter = QtGui.QPainter(self)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+        painter.setCompositionMode(QtGui.QPainter.CompositionMode_Clear)
+        painter.fillRect(self.rect(), QtGui.QColor(0, 0, 0, 0))
+
+    def updateOverlayPosition(self):
+        # Mettre à jour la position de l'overlay en fonction de la position de la fenêtre principale
+        parent_position = self.parent().pos()
+        self.move(parent_position.x(), parent_position.y() + 25)  # Définir la nouvelle position de l'overlay
+
+    def updateScore(self, score, temps, s, vie):
+        font = QFont('Arial', 24)
+        self.overlay_label.setFont(font)
+        self.overlay_label.setAlignment(QtCore.Qt.AlignRight)
+        self.overlay_label.setIndent(20)
+        self.overlay_label.setText("<p style= 'line-height:60%'><font color='white'><br>" + str(int(score / 10)) +
+                                   "</font></p><p style='line-height:115%'><font color='white'><br>" + str(
+            int(temps)) + "</font></p>")
+        self.score_lbl.setFont(font)
+        self.score_lbl.setAlignment(QtCore.Qt.AlignRight)
+        self.score_lbl.setIndent(20)
+        self.score_lbl.setText("<p style= 'line-height:60%'><font color='white'><br>" + str(s + score) +
+                               "</font></p>")
+
+        self.vie_lbl.setFont(font)
+        self.vie_lbl.setAlignment(QtCore.Qt.AlignRight)
+        self.vie_lbl.setIndent(20)
+        self.vie_lbl.setText("<p style= 'line-height:60%'><font color='white'><br>" + str(vie) +
+                             "</font></p>")

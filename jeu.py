@@ -3,8 +3,9 @@ import time
 from PyQt5.Qt import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QMutex, QUrl
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from PyQt5.QtCore import pyqtSignal
 from MenuDuJeu import *
 from BoulderDash import *
 
@@ -21,6 +22,8 @@ class LancerBoulderDash(QMainWindow):
         self.type_widget = "menu"
         self.setCentralWidget(self.widget)
         #
+        #
+        #
         # lancer le minuteur permettant le mise à jour du plateau
         self.timer = QTimer()
         self.timer.timeout.connect(self.check_fin)
@@ -32,6 +35,7 @@ class LancerBoulderDash(QMainWindow):
         self._mutex = QMutex()
         #
         #
+
     def init_audio(self):
         # Chargement et lecture de la musique d'arrière-plan
         self.player = QMediaPlayer()
@@ -75,6 +79,8 @@ class LancerBoulderDash(QMainWindow):
                 self.vie = 3
                 self.changement_de_plateau(self.niveau_actuel)
                 #
+            elif event.key() == Qt.Key_L:
+                self.load_niveau()
 
     def score_board(self, score):
         with open("score_board.txt", "r") as f:
@@ -91,6 +97,9 @@ class LancerBoulderDash(QMainWindow):
         """Auteur : Chloé
         vérifie l'état actuel de la partie en cours"""
         a, pt = self.widget.update_plateau()
+        self.n += 1
+        if self.type_widget == "jeu":
+            self.widgetInfo.updateScore(pt, self.widget.temps_imparti, self.s, self.vie)
         if a == 1:  # le joueur est mort
             self.vie -= 1
             if self.vie == 0:
@@ -119,7 +128,7 @@ class LancerBoulderDash(QMainWindow):
         permet de sauvegarder un niveau"""
         list_of_files = os.listdir('./sauv')
         full_path = ["./sauv/{0}".format(x) for x in list_of_files]
-        if len(list_of_files) == 5:
+        if len(list_of_files) >= 1:
             oldest_file = min(full_path, key=os.path.getctime)
             os.remove(oldest_file)
 
@@ -152,9 +161,13 @@ class LancerBoulderDash(QMainWindow):
         permet de changer le niveau de jeu lors d'un passage à un niveay + difficile"""
         self.widget = Stase()
         self.type_widget = "jeu"
+        self.n = 0
         bd = self.genere_niveau(niveau)
         self.widget = bd
+        self.widgetInfo = InfoAlEcran(self)
+        self.widgetInfo.setGeometry(self.geometry())
         self.setCentralWidget(self.widget)
+        self.widgetInfo.show()
         self.widget.show()
 
     def load_niveau(self):
@@ -169,17 +182,13 @@ class LancerBoulderDash(QMainWindow):
         with open(oldest_file, "r") as f:
             premiere_ligne = int(f.readlines()[0].strip().split(' : ')[1])
             f.close()
-        print('ras')
         self.niveau_actuel = premiere_ligne
         bd = self.genere_niveau(premiere_ligne, is_sauv=True, sauv=oldest_file)
-        print('ras')
         self.widget = bd
-        self.widgetInfo = InfoAlEcran(0, 0)
-        overlay_layout = QVBoxLayout(self)
-        overlay_layout.addWidget(self.widget)
-        overlay_layout.addWidget(self.widgetInfo)
-        self.setLayout(overlay_layout)
+        self.widgetInfo = InfoAlEcran(self)
+        self.widgetInfo.setGeometry(self.geometry())
         self.setCentralWidget(self.widget)
+        self.widgetInfo.show()
         self.widget.show()
         print("derniere sauvegarde loadée !")
 
@@ -253,6 +262,13 @@ class LancerBoulderDash(QMainWindow):
         """donne la première ligne du fichier des niveaux à lire pour générer le deuxième niveau"""
         ligne_a_lire = 30  # premiere ligne du fichier des niveaux à lire correspondant au niveau 2
         return ligne_a_lire
+
+    def moveEvent(self, event):
+        # Émettre le signal de déplacement de la fenêtre
+        self.windowMoved.emit()
+
+    # Définition du signal de déplacement de la fenêtre
+    windowMoved = pyqtSignal()
 
 
 if __name__ == "__main__":

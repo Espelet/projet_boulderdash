@@ -265,14 +265,16 @@ class Plateau(QGridLayout):
             self.removeWidget(wid)
         self.removeWidget(label_element)
 
-    def is_element(self, el):
+    def is_element(self, el, i=0, j=0):
         """vérifie qu'un élément existe bien sur le plateau"""
-        for i in range(self.width):
-            for j in range(self.height):
-                if self.grid[i][j] is not None:
-                    if isinstance(self.grid[i][j].element, el):
-                        return True
-        return False
+        if i == self.width:
+            return False
+        if j == self.height:
+            return self.is_element(el, i + 1, 0)
+        if self.grid[i][j] is not None:
+            if isinstance(self.grid[i][j].element, el):
+                return True
+        return self.is_element(el, i, j + 1)
 
     def move_element(self, label_element, x, y):
         """lors de la phase de jeu, déplace un élément d'un point A à un point B"""
