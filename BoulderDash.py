@@ -52,7 +52,8 @@ class BoulderDash(QWidget):
         self.n = 0
 
     def recup_data_niveau(self):
-        """récupère les informations permettant la bonne mise en place du niveau"""
+        """Auteur : Chloé
+        récupère les informations permettant la bonne mise en place du niveau"""
         with open("./niveau/A.txt", "r") as f:
             lines = f.readlines()[self.premiere_ligne:]
             self.y_sortie, self.x_sortie = tuple(map(int, lines[1].strip().split(' : ')[1].split(', ')))
@@ -61,7 +62,8 @@ class BoulderDash(QWidget):
             f.close()
 
     def generate(self, fichier_a_lire="./niveau/A.txt"):
-        """génère le terrain de jeu"""
+        """Auteur : Tristan
+        génère le terrain de jeu"""
         self.recup_data_niveau()
         if fichier_a_lire != "./niveau/A.txt":
             self.premiere_ligne = 0
@@ -93,7 +95,8 @@ class BoulderDash(QWidget):
             self.falling_ent = self.P.get_falling_elements()
 
     def bouge(self, dir):
-        """assigne à chaque entrée du joueur une action"""
+        """Auteur : Chloé
+        assigne à chaque entrée du joueur une action"""
         if dir == 'down':
             self.score += self.P.move_player(1, 0, 'down')
         elif dir == 'up':
@@ -125,7 +128,8 @@ class BoulderDash(QWidget):
             return l, t
 
     def mouvement_plateau(self):
-        """permet de fluidifier le mouvement du cadre lorsque celui-ci se déplace pour centrer la vue"""
+        """Auteur : Tristan
+        permet de fluidifier le mouvement du cadre lorsque celui-ci se déplace pour centrer la vue"""
         if self.mvt_plateau:
             if self.l_sv == self.l and self.t_sv == self.t:
                 self.l_sv = self.l
@@ -149,11 +153,13 @@ class BoulderDash(QWidget):
                 self.mvt_plateau = False
 
     def verif_temps(self):
-        """vérifie que le temps imparti pour finir le niveau ne s'est pas écoulé"""
+        """Auteur Tristan :
+        vérifie que le temps imparti pour finir le niveau ne s'est pas écoulé"""
         return True if self.temps_imparti == 0 else False
 
     def update_plateau(self):
-        """met à jour le plateau toutes les 125 ms"""
+        """Auteur : Tristan
+        met à jour le plateau toutes les 125 ms"""
         self.n += 1
         if self.n % 8 == 0:
             self.temps_imparti -= 1
@@ -183,7 +189,7 @@ stylesheet_jeu = """
 
 
 class InfoAlEcran(QWidget):
-    """Auteur : Chloe
+    """Auteur : Chloé
     affiche les informations importantes pour le joueur à l'écran"""
     def __init__(self, parent=None):
         super().__init__(parent)
