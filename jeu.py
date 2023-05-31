@@ -11,7 +11,8 @@ from BoulderDash import *
 
 
 class LancerBoulderDash(QMainWindow):
-    """classe principale générant l'IHM"""
+    """Auteur : Tristan
+    classe principale générant l'IHM"""
     def __init__(self):
         super(LancerBoulderDash, self).__init__()
         #
@@ -39,7 +40,8 @@ class LancerBoulderDash(QMainWindow):
         #
 
     def init_audio(self):
-        '''Chargement et lecture de la musique d'arrière-plan'''
+        '''Auteur : Chloé
+        Chargement et lecture de la musique d'arrière-plan'''
         self.player = QMediaPlayer()
         url = QUrl.fromLocalFile("images/Boulder_Das_music.mp3")
         content = QMediaContent(url)
@@ -92,6 +94,8 @@ class LancerBoulderDash(QMainWindow):
                 self.load_niveau()
 
     def score_board(self, score):
+        """Auteur : Chloé
+        Enregistre le score dans le tableau des scores physiques"""
         with open("score_board.txt", "r") as f:
             scores = f.readlines()   # On lit tous les scores existants et on les stocke dans une liste
         scores.append(str(score) + "\n")   # On ajoute le score actuel à la liste
@@ -223,7 +227,8 @@ class LancerBoulderDash(QMainWindow):
         print("derniere sauvegarde loadée !")
 
     def handleStateChanged(self, state):
-        """réinitialise la musique quand elle s'arrête"""
+        """Auteur : Chloé
+        réinitialise la musique quand elle s'arrête"""
         if state == QMediaPlayer.StoppedState:
             self.player.setPosition(0)
             self.player.play()
