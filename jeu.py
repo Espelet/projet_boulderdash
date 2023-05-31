@@ -40,13 +40,13 @@ class LancerBoulderDash(QMainWindow):
         #
 
     def init_audio(self):
-        # Chargement et lecture de la musique d'arrière-plan
+        '''Chargement et lecture de la musique d'arrière-plan'''
         self.player = QMediaPlayer()
         url = QUrl.fromLocalFile("images/Boulder_Das_music.mp3")
         content = QMediaContent(url)
         self.player.setMedia(content)
         self.player.setVolume(50)
-        self.player.stateChanged.connect(self.handleStateChanged)
+        self.player.stateChanged.connect(self.handleStateChanged) #joue en continue
         self.player.play()
 
     def keyPressEvent(self, event):

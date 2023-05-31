@@ -18,11 +18,13 @@ class MenuDuJeu(QWidget):
         self.setLayout(self.layout)
 
     def update_plateau(self):
-        """est une fonction bidon afin d'unifier toutes les sous-classes de la fenêtre principale de Qt"""
+        """Auteur : Tristan
+        C'est une fonction fantôme afin d'unifier toutes les sous-classes de la fenêtre principale de Qt"""
         return 15, 0
 
     def write(self):
-        """permet d'écrire HSCORE sur le menu avec le meilleur score enregistré"""
+        """Auteur : Trsitan
+        permet d'écrire HSCORE sur le menu avec le meilleur score enregistré"""
         asci = self.wrt
         liste_txt = [[(1, 7), asci["h"]], [(1, 8), asci["s"]], [(1, 9), asci["c"]], [(1, 10), asci["o"]],
                         [(1, 11), asci["r"]], [(1, 12), asci["e"]]]
