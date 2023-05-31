@@ -7,7 +7,7 @@ from element_deuxieme_partie import *
 
 class Stase(QWidget):
     """Auteur : Chloé
-    classe de transition entre chaque chargement de niveau"""
+    classe de transition entre chaque changement de niveau"""
 
     def __init__(self):
         super(Stase, self).__init__()
