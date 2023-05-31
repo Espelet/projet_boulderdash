@@ -183,6 +183,8 @@ stylesheet_jeu = """
 
 
 class InfoAlEcran(QWidget):
+    """Auteur : Chloé
+    affiche les informations importantes pour le joueur à l'écran"""
     def __init__(self, parent=None):
         super().__init__(parent)
         # Créer le widget de l'overlay
@@ -242,7 +244,8 @@ class InfoAlEcran(QWidget):
         self.move(parent_position.x(), parent_position.y() + 25)  # Définir la nouvelle position de l'overlay
 
     def updateScore(self, score, temps, s, vie):
-        """met à jour le score, le nombre de vies, le nombre de diamants récupérés et le temps restant"""
+        """Auteur : Chloé
+        met à jour le score, le nombre de vies, le nombre de diamants récupérés et le temps restant"""
         font = QFont('Arial', 24)
         self.overlay_label.setFont(font)
         self.overlay_label.setAlignment(QtCore.Qt.AlignRight)
