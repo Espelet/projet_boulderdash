@@ -183,7 +183,7 @@ stylesheet_jeu = """
 
 
 class InfoAlEcran(QWidget):
-    """Auteur : Chloé
+    """Auteur : Chloe
     affiche les informations importantes pour le joueur à l'écran"""
     def __init__(self, parent=None):
         super().__init__(parent)
