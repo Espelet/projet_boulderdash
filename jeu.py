@@ -16,6 +16,8 @@ class LancerBoulderDash(QMainWindow):
         super(LancerBoulderDash, self).__init__()
         #
         # lance le menu
+        self.dernier_niveau = False
+        self.niveau_suivant = 0
         self.setWindowTitle('BoulderDash')
         self.setWindowIcon(QIcon("images\player_decoupe.png"))  # Ajouter une icône dans la barre de titre
         self.widget = self.lancer_menu_du_jeu()
@@ -106,6 +108,8 @@ class LancerBoulderDash(QMainWindow):
                 print("NUL NUL NUL !")
                 print("score : ", self.s)
                 self.score_board(self.s)
+                self.widget.close()
+                self.widgetInfo.close()
                 self.close()
             if self.vie > 0:
                 print("Vie restante : ", self.vie)
@@ -118,8 +122,16 @@ class LancerBoulderDash(QMainWindow):
             print("score : ", self.s)
             #
             # on génère le niveau suivant
-            self.niveau_actuel = self.niveau_2()
-            self.changement_de_plateau(self.niveau_actuel)
+            if self.niveau_suivant != self.niveau_actuel:
+                print("je suis ici")
+                self.niveau_actuel = self.niveau_suivant
+                self.changement_de_plateau(self.niveau_actuel)
+            else:
+                self.widget.close()
+                self.widgetInfo.hide()
+                self.type_widget = "menu"
+                self.widget = self.lancer_menu_du_jeu()
+                self.setCentralWidget(self.widget)
             #
             #
 
@@ -134,8 +146,11 @@ class LancerBoulderDash(QMainWindow):
 
         nom_fichier = "./sauv/sauv_" + time.strftime("%Y%m%d-%H%M%S") + ".txt"
         res = ""
-        res += "niveau : " + str(self.niveau_actuel) + "\n"
-        res += "score : " + str(self.s + self.widget.score) + "\n"
+        res += "niveau actuel : " + str(self.niveau_actuel) + "\n"
+        res += "niveau suivant : " + str(self.niveau_suivant) + "\n"
+        res += "score : " + str(self.s) + "\n"
+        res += "vie : " + str(self.vie) + "\n"
+        res += "diamants récoltés : " + str(int(self.widget.score/10)) + "\n"
         res += "temps restant : " + str(self.widget.temps_imparti) + "\n\n"
         with open(nom_fichier, "w") as f:
             for k in self.widget.P.grid:
@@ -174,13 +189,18 @@ class LancerBoulderDash(QMainWindow):
         """Auteur : Tristan
         charge un niveau à partir d'une sauvegarde"""
         self.widget.close()
+        self.widgetInfo.close()
         self.widget = Stase()
         self.type_widget = "jeu"
         list_of_files = os.listdir('./sauv')
         full_path = ["./sauv/{0}".format(x) for x in list_of_files]
         oldest_file = min(full_path, key=os.path.getctime)
         with open(oldest_file, "r") as f:
-            premiere_ligne = int(f.readlines()[0].strip().split(' : ')[1])
+            lignes = f.readlines()
+            premiere_ligne = int(lignes[0].strip().split(' : ')[1])
+            self.niveau_suivant = int(lignes[1].strip().split(' : ')[1])
+            self.s = int(lignes[2].strip().split(' : ')[1])
+            self.vie = int(lignes[3].strip().split(' : ')[1])
             f.close()
         self.niveau_actuel = premiere_ligne
         bd = self.genere_niveau(premiere_ligne, is_sauv=True, sauv=oldest_file)
@@ -256,11 +276,14 @@ class LancerBoulderDash(QMainWindow):
     def niveau_1(self):
         """donne la première ligne du fichier des niveaux à lire pour générer le premier niveau"""
         ligne_a_lire = 0  # premiere ligne du fichier des niveaux à lire correspondant au niveau 1
+        self.niveau_suivant = self.niveau_2()
+        self.dernier_niveau = False
         return ligne_a_lire
 
     def niveau_2(self):
         """donne la première ligne du fichier des niveaux à lire pour générer le deuxième niveau"""
         ligne_a_lire = 30  # premiere ligne du fichier des niveaux à lire correspondant au niveau 2
+        self.dernier_niveau = True
         return ligne_a_lire
 
     def moveEvent(self, event):
