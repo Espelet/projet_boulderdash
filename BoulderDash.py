@@ -68,9 +68,9 @@ class BoulderDash(QWidget):
         with open(fichier_a_lire, "r") as f:
             lines = f.readlines()[self.premiere_ligne:]
             if fichier_a_lire != "./niveau/A.txt":
-                k = 4
-                self.score = int(lines[1].strip().split(' : ')[1])
-                self.temps_imparti = int(lines[2].strip().split(' : ')[1])
+                k = 7
+                self.score = int(lines[4].strip().split(' : ')[1]) * 10
+                self.temps_imparti = int(lines[5].strip().split(' : ')[1])
             else:
                 k = 5
             h = 0
@@ -200,6 +200,20 @@ class InfoAlEcran(QWidget):
                                 background-image: url('./images/t_score.png');
                             }
                         """)
+        self.info = QLabel(self)
+        self.info.setGeometry(1305, 720, 293, 79)
+        self.info.setStyleSheet("""
+                                    QLabel {
+                                        background-image: url('./images/t_score.png');
+                                    }
+                                """)
+        font = QFont('Arial', 24)
+        self.info.setFont(font)
+        self.info.setAlignment(QtCore.Qt.AlignCenter)
+        self.info.setIndent(0)
+        self.info.setText("<p style= 'line-height:5%'><font color='white'><br>" + "N : Sauvegarde" +
+                             "</font></p>")
+
         self.vie_lbl = QLabel(self)
         self.vie_lbl.setGeometry(25, 183, 218, 79)
         self.vie_lbl.setStyleSheet("""
